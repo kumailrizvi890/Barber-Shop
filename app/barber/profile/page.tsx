@@ -3,20 +3,52 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useApp } from "@/lib/context/AppContext";
-import { GhostButton } from "@/components/UI";
+import { updateBarberProfile } from "@/lib/api";
+import { GhostButton, GoldButton } from "@/components/UI";
+import { PostLightbox } from "@/components/PostLightbox";
 import type { BarberService, Post } from "@/lib/types";
 
 export default function BarberProfilePage() {
   const supabase = createClient();
-  const { profile, logout } = useApp();
+  const { profile, logout, refreshProfile } = useApp();
 
   const [services, setServices] = useState<BarberService[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [svcName, setSvcName] = useState("");
   const [svcPrice, setSvcPrice] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [openPost, setOpenPost] = useState<Post | null>(null);
   const photoInput = useRef<HTMLInputElement>(null);
   const videoInput = useRef<HTMLInputElement>(null);
+
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editLocation, setEditLocation] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  function startEdit() {
+    setEditName(profile?.name ?? "");
+    setEditLocation(profile?.location ?? "");
+    setEditBio(profile?.bio ?? "");
+    setEditing(true);
+  }
+
+  async function saveEdit() {
+    if (!profile || !editName.trim()) return;
+    setSaving(true);
+    try {
+      await updateBarberProfile(supabase, profile.id, {
+        name: editName.trim(),
+        location: editLocation.trim(),
+        bio: editBio.trim(),
+      });
+      await refreshProfile();
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const load = useCallback(async () => {
     if (!profile) return;
@@ -71,21 +103,59 @@ export default function BarberProfilePage() {
     <div>
       <div className="mb-[18px] font-headline text-[19px]">PROFILE</div>
 
-      <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-4">
-        <div
-          className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl border border-gold/40 font-headline text-base text-gold"
-          style={{ background: "linear-gradient(135deg,#2a2a2a,#151515)" }}
-        >
-          {profile?.initials}
+      {editing ? (
+        <div className="mb-4 rounded-2xl border border-gold/25 bg-card p-4">
+          <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">NAME</div>
+          <input
+            className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            placeholder="Your name"
+          />
+          <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">LOCATION</div>
+          <input
+            className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            value={editLocation}
+            onChange={(e) => setEditLocation(e.target.value)}
+            placeholder="Shop location / address"
+          />
+          <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">DESCRIPTION</div>
+          <textarea
+            className="mb-4 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            rows={3}
+            value={editBio}
+            onChange={(e) => setEditBio(e.target.value)}
+            placeholder="Your style, experience..."
+          />
+          <div className="flex gap-2.5">
+            <GoldButton disabled={saving || !editName.trim()} onClick={saveEdit}>
+              {saving ? "Saving…" : "Save"}
+            </GoldButton>
+            <GhostButton onClick={() => setEditing(false)}>Cancel</GhostButton>
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-[15px] font-extrabold">{profile?.name}</div>
-          <div className="text-[11.5px] text-muted">{profile?.location}</div>
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-4">
+            <div
+              className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl border border-gold/40 font-headline text-base text-gold"
+              style={{ background: "linear-gradient(135deg,#2a2a2a,#151515)" }}
+            >
+              {profile?.initials}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[15px] font-extrabold">{profile?.name}</div>
+              <div className="text-[11.5px] text-muted">{profile?.location}</div>
+            </div>
+            <div onClick={startEdit} className="cursor-pointer rounded-lg border border-white/10 px-2.5 py-[7px] text-[11.5px] font-bold text-gold">
+              Edit
+            </div>
+          </div>
 
-      {profile?.bio && (
-        <div className="mb-4 rounded-2xl border border-white/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
+          {profile?.bio && (
+            <div className="mb-4 rounded-2xl border border-white/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
+          )}
+        </>
       )}
 
       <div className="mb-5 flex justify-between gap-2 rounded-2xl border border-white/[0.07] bg-card p-[14px_4px]">
@@ -146,7 +216,11 @@ export default function BarberProfilePage() {
       {posts.length > 0 ? (
         <div className="mb-2.5 grid grid-cols-3 gap-1.5">
           {posts.map((p) => (
-            <div key={p.id} className="relative aspect-square overflow-hidden rounded-lg bg-inputbg">
+            <div
+              key={p.id}
+              onClick={() => setOpenPost(p)}
+              className="relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-inputbg"
+            >
               {p.type === "image" ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={p.media_url} alt="" className="h-full w-full object-cover" />
@@ -170,6 +244,15 @@ export default function BarberProfilePage() {
       <div className="mt-1.5">
         <GhostButton onClick={logout}>Log Out</GhostButton>
       </div>
+
+      {openPost && profile && (
+        <PostLightbox
+          post={openPost}
+          barberName={profile.name}
+          onClose={() => setOpenPost(null)}
+          onDeleted={() => setPosts((ps) => ps.filter((p) => p.id !== openPost.id))}
+        />
+      )}
     </div>
   );
 }

@@ -23,6 +23,10 @@ export default function CustomerHomePage() {
     router.push("/customer/book");
   }
 
+  function viewProfile(barberId: string) {
+    router.push(`/customer/barber/${barberId}`);
+  }
+
   return (
     <div className="px-5 pb-7">
       <div className="relative mb-5 overflow-hidden rounded-[20px] border border-gold/25 p-[26px_20px]" style={{ background: "linear-gradient(160deg,#1a1a1a,#0d0d0d)" }}>
@@ -60,7 +64,7 @@ export default function CustomerHomePage() {
         {barbers.map((b) => (
           <div
             key={b.id}
-            onClick={() => goBook(b.id)}
+            onClick={() => viewProfile(b.id)}
             className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-[12px_14px]"
           >
             <BarberAvatar initials={b.initials} size={52} rounded={12} />

@@ -175,7 +175,18 @@ export default function BookPage() {
                   {specialtyLabel(b)} · {priceLabel(b)}
                 </div>
               </div>
-              <div className="text-xs font-bold text-gold">★ {b.rating}</div>
+              <div className="flex flex-col items-end gap-1">
+                <div className="text-xs font-bold text-gold">★ {b.rating}</div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/customer/barber/${b.id}`);
+                  }}
+                  className="text-[10.5px] font-bold text-muted underline underline-offset-2"
+                >
+                  View profile
+                </div>
+              </div>
             </div>
           ))}
         </div>

@@ -261,6 +261,12 @@ export default function AuthPage() {
 
       <header className="relative z-10 mx-auto flex max-w-[1280px] items-center justify-between px-6 pt-8 sm:px-10">
         <Wordmark size={20} sub="LYNNWOOD" />
+        <a href="tel:+14253611190" className="flex items-center gap-2 text-[13px] font-bold text-secondary hover:text-gold">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          (425) 361-1190
+        </a>
       </header>
 
       <main className="relative z-10 mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-14 px-6 pb-20 pt-10 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pt-16">
@@ -324,7 +330,7 @@ export default function AuthPage() {
       </main>
 
       <footer className="relative z-10 border-t border-white/[0.06] py-6 text-center text-[10.5px] text-[#5a5a55]">
-        FADE KINGS BARBER SHOP — LYNNWOOD, WA © 2026
+        FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
       </footer>
     </div>
   );

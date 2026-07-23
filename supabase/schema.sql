@@ -105,6 +105,46 @@ create policy "posts are readable by any authenticated user"
 create policy "barbers manage their own posts"
   on posts for all to authenticated
   using (auth.uid() = barber_id) with check (auth.uid() = barber_id);
+create policy "public can read posts"
+  on posts for select to anon using (true);
+
+-- ── post_likes ───────────────────────────────────────────────────────────
+create table if not exists post_likes (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  user_id uuid not null references profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (post_id, user_id)
+);
+
+alter table post_likes enable row level security;
+create policy "likes are publicly readable"
+  on post_likes for select to anon, authenticated using (true);
+create policy "users manage their own likes"
+  on post_likes for all to authenticated
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- ── post_comments ────────────────────────────────────────────────────────
+create table if not exists post_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  user_id uuid not null references profiles(id) on delete cascade,
+  text text not null,
+  hidden boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+alter table post_comments enable row level security;
+create policy "visible comments are publicly readable"
+  on post_comments for select to anon, authenticated using (hidden = false);
+create policy "barbers can read all comments on their own posts"
+  on post_comments for select to authenticated
+  using (auth.uid() = (select barber_id from posts where posts.id = post_comments.post_id));
+create policy "users can add comments"
+  on post_comments for insert to authenticated with check (auth.uid() = user_id);
+create policy "barbers can hide comments on their own posts"
+  on post_comments for update to authenticated
+  using (auth.uid() = (select barber_id from posts where posts.id = post_comments.post_id));
 
 -- ── notifications ────────────────────────────────────────────────────────
 create table if not exists notifications (

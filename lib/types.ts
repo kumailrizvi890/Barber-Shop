@@ -58,6 +58,17 @@ export interface Post {
   created_at: string;
 }
 
+export interface PostComment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  text: string;
+  hidden: boolean;
+  created_at: string;
+  // joined
+  author?: Profile;
+}
+
 export interface Notification {
   id: string;
   user_id: string;
