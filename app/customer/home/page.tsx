@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useApp } from "@/lib/context/AppContext";
 import { fetchBarbers, priceLabel, specialtyLabel, type BarberWithServices } from "@/lib/barbers";
-import { BarberPole } from "@/components/BarberPole";
+import { BarberLottie } from "@/components/BarberLottie";
 import { BarberAvatar } from "@/components/UI";
 
 export default function CustomerHomePage() {
@@ -28,7 +28,7 @@ export default function CustomerHomePage() {
       <div className="relative mb-5 overflow-hidden rounded-[20px] border border-gold/25 p-[26px_20px]" style={{ background: "linear-gradient(160deg,#1a1a1a,#0d0d0d)" }}>
         <div className="relative flex items-center gap-[18px]">
           <div className="animate-floatSlow">
-            <BarberPole width={46} height={120} radius={23} />
+            <BarberLottie height={104} />
           </div>
           <div className="flex-1">
             <div className="font-headline text-[22px] leading-[1.05] tracking-tight">

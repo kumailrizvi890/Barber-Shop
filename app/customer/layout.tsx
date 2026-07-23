@@ -1,7 +1,7 @@
 "use client";
 
 import { AppProvider, useApp } from "@/lib/context/AppContext";
-import { Wordmark } from "@/components/BarberPole";
+import { Wordmark } from "@/components/Logo";
 import { NotificationBell } from "@/components/NotificationBell";
 import { TabBar } from "@/components/TabBar";
 

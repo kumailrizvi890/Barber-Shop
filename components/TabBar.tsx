@@ -94,7 +94,9 @@ export function TabBar({ role, badge }: { role: "customer" | "barber"; badge?: b
             className="relative flex-1 py-1.5 text-center"
             style={{ color: active ? "#D4AF37" : "#6b6b66" }}
           >
-            <Icon>{t.icon}</Icon>
+            <div className="flex justify-center">
+              <Icon>{t.icon}</Icon>
+            </div>
             <div className="mt-1 text-[10px] font-bold">{t.label}</div>
             {badge && t.label === "Requests" && (
               <div className="absolute right-[calc(50%-22px)] top-0.5 h-2 w-2 rounded-full bg-gold" />

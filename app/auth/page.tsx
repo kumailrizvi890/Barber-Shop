@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { initialsFor } from "@/lib/slots";
 import { toE164 } from "@/lib/phone";
-import { Wordmark } from "@/components/BarberPole";
+import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
 import { Hero3DGate } from "@/components/Hero3DGate";
 import { GoldButton, GhostButton } from "@/components/UI";

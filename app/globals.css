@@ -28,22 +28,6 @@ textarea {
   resize: none;
 }
 
-/* Signature barber pole — pure CSS diagonal stripe scroll, no seams. */
-.barber-pole {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #d4af37 0px,
-    #d4af37 10px,
-    #0a0a0a 10px,
-    #0a0a0a 20px,
-    #f5f5f0 20px,
-    #f5f5f0 30px,
-    #0a0a0a 30px,
-    #0a0a0a 40px
-  );
-  background-size: 100% 40px;
-}
-
 @keyframes marquee-precise {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(calc(-1 * var(--marquee-w)), 0, 0); }

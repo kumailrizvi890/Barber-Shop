@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppProvider, useApp } from "@/lib/context/AppContext";
 import { createClient } from "@/lib/supabase/client";
 import { TabBar } from "@/components/TabBar";
+import { Wordmark } from "@/components/Logo";
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { profile, loading } = useApp();
@@ -37,10 +38,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell">
       <div className="flex shrink-0 items-center justify-between px-5 pb-1 pt-14">
-        <div className="font-headline text-[17px] tracking-tight">
-          FADE <span className="text-gold">KINGS</span>{" "}
-          <span className="font-body text-[10px] font-normal text-muted">BARBER</span>
-        </div>
+        <Wordmark size={17} sub="BARBER" />
         <div
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 text-xs font-bold text-gold"
           style={{ background: "linear-gradient(135deg,#2a2a2a,#151515)" }}

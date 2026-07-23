@@ -26,7 +26,6 @@ const config: Config = {
         card: "18px",
       },
       keyframes: {
-        poleScroll: { from: { backgroundPosition: "0 0" }, to: { backgroundPosition: "0 40px" } },
         pulseGold: {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(212,175,55,0.55)" },
           "50%": { boxShadow: "0 0 0 10px rgba(212,175,55,0)" },
@@ -41,7 +40,6 @@ const config: Config = {
         dotPing: { "0%, 100%": { transform: "scale(1)" }, "50%": { transform: "scale(1.3)" } },
       },
       animation: {
-        poleScroll: "poleScroll 1.1s linear infinite",
         pulseGold: "pulseGold 2s infinite",
         checkPop: "checkPop 0.4s ease",
         floatSlow: "floatSlow 3s ease-in-out infinite",
