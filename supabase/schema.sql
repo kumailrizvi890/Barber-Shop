@@ -143,4 +143,4 @@ create policy "barbers upload their own post media"
   with check (bucket_id = 'posts' and (storage.foldername(name))[1] = auth.uid()::text);
 create policy "barbers delete their own post media"
   on storage.objects for delete to authenticated
-  with check (bucket_id = 'posts' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (bucket_id = 'posts' and (storage.foldername(name))[1] = auth.uid()::text);
