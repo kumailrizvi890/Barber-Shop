@@ -15,8 +15,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fade House — Barber Booking",
-  description: "Book your next cut. Barbers manage requests, schedule, and rewards.",
+  title: "Fade Kings Barber Shop — Lynnwood",
+  description: "Book your next cut at Fade Kings Barber Shop in Lynnwood. Browse the crew, book a chair, and earn rewards on every visit.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

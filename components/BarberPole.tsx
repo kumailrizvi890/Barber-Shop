@@ -26,7 +26,7 @@ export function Wordmark({ size = 20, sub }: { size?: number; sub?: string }) {
     <div className="flex items-center justify-center gap-2.5">
       <BarberPole width={size} height={size * 2.3} />
       <div className="font-headline tracking-tight" style={{ fontSize: size }}>
-        FADE <span className="text-gold">HOUSE</span>
+        FADE <span className="text-gold">KINGS</span>
         {sub && <span className="ml-1.5 font-body text-[10px] font-normal text-muted align-middle">{sub}</span>}
       </div>
     </div>

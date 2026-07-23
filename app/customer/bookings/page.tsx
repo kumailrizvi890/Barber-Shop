@@ -16,7 +16,11 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    if (!profile) return;
+    if (!profile) {
+      setBookings([]);
+      setLoading(false);
+      return;
+    }
     const { data } = await supabase
       .from("bookings")
       .select("*, barber:barber_id(name, initials, location)")

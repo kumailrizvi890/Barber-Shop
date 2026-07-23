@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useApp } from "@/lib/context/AppContext";
 import { fetchBarbers, priceLabel, specialtyLabel, type BarberWithServices } from "@/lib/barbers";
-import { TIME_SLOTS, next7Days } from "@/lib/slots";
+import { TIME_SLOTS, next7Days, initialsFor } from "@/lib/slots";
+import { toE164 } from "@/lib/phone";
 import { requestBooking } from "@/lib/api";
 import { BarberAvatar, GoldButton, GhostButton } from "@/components/UI";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
 // Deterministic pseudo-unavailability so the demo has some greyed-out slots
 // even before real bookings exist. Replace with a live join against
@@ -23,7 +24,7 @@ function seededUnavailable(barberId: string, dateIdx: number, slotIdx: number) {
 export default function BookPage() {
   const supabase = createClient();
   const router = useRouter();
-  const { profile, refreshNotifications } = useApp();
+  const { profile, isAnonymous, refreshNotifications, refreshProfile, ensureGuestProfile } = useApp();
 
   const [barbers, setBarbers] = useState<BarberWithServices[]>([]);
   const [step, setStep] = useState<Step>(1);
@@ -33,6 +34,13 @@ export default function BookPage() {
   const [time, setTime] = useState<string | null>(null);
   const [blockedSet, setBlockedSet] = useState<Set<string>>(new Set());
   const [submitting, setSubmitting] = useState(false);
+
+  const [gName, setGName] = useState("");
+  const [gPhone, setGPhone] = useState("");
+  const [gPassword, setGPassword] = useState("");
+  const [converting, setConverting] = useState(false);
+  const [convertError, setConvertError] = useState<string | null>(null);
+  const [converted, setConverted] = useState(false);
 
   const dates = useMemo(() => next7Days(), []);
   const selectedBarber = barbers.find((b) => b.id === barberId) ?? null;
@@ -83,12 +91,13 @@ export default function BookPage() {
   }
 
   async function confirmBooking() {
-    if (!profile || !selectedBarber || !selectedService || !time) return;
+    if (!selectedBarber || !selectedService || !time) return;
     setSubmitting(true);
     try {
+      const bookingProfile = await ensureGuestProfile();
       await requestBooking(supabase, {
-        customerId: profile.id,
-        customerName: profile.name,
+        customerId: bookingProfile.id,
+        customerName: bookingProfile.name,
         barberId: selectedBarber.id,
         barberName: selectedBarber.name,
         serviceId: selectedService.id,
@@ -99,7 +108,11 @@ export default function BookPage() {
         time,
       });
       await refreshNotifications();
-      router.push("/customer/bookings");
+      if (isAnonymous || bookingProfile.name === "Guest") {
+        setStep(4);
+      } else {
+        router.push("/customer/bookings");
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -107,12 +120,45 @@ export default function BookPage() {
     }
   }
 
-  const stepLabel = step === 1 ? "Step 1 of 3 — Pick your barber" : step === 2 ? "Step 2 of 3 — Service, date & time" : "Step 3 of 3 — Confirm";
+  async function convertGuestAccount() {
+    if (!gPhone.trim() || !gPassword.trim()) return;
+    setConverting(true);
+    setConvertError(null);
+    try {
+      const { error } = await supabase.auth.updateUser({ phone: toE164(gPhone), password: gPassword });
+      if (error) throw error;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const name = gName.trim() || "Guest";
+        await supabase
+          .from("profiles")
+          .update({ name, phone: toE164(gPhone), initials: initialsFor(name) })
+          .eq("id", user.id);
+      }
+      await refreshProfile();
+      setConverted(true);
+    } catch (e: any) {
+      setConvertError(e.message ?? "Something went wrong.");
+    } finally {
+      setConverting(false);
+    }
+  }
+
+  const stepLabel =
+    step === 1
+      ? "Step 1 of 3 — Pick your barber"
+      : step === 2
+      ? "Step 2 of 3 — Service, date & time"
+      : step === 3
+      ? "Step 3 of 3 — Confirm"
+      : "Booked! Save your spot";
 
   return (
     <div className="px-5 pb-7">
       <div className="mb-1 font-headline text-[19px]">BOOK A CHAIR</div>
-      <div className="mb-[18px] text-xs text-muted">{stepLabel}</div>
+      {step !== 4 && <div className="mb-[18px] text-xs text-muted">{stepLabel}</div>}
 
       {step === 1 && (
         <div className="flex flex-col gap-2.5">
@@ -259,6 +305,68 @@ export default function BookPage() {
             </GoldButton>
           </div>
           <GhostButton onClick={() => setStep(2)}>Back</GhostButton>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div>
+          <div className="my-2.5 mb-[22px] flex justify-center">
+            <div
+              className="flex h-[72px] w-[72px] animate-checkPop items-center justify-center rounded-full"
+              style={{ background: "radial-gradient(circle,#D4AF37,#a8842a)" }}
+            >
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+
+          {converted ? (
+            <>
+              <div className="mb-1 text-center font-headline text-lg">YOU'RE ALL SET</div>
+              <div className="mb-[22px] text-center text-xs text-muted">
+                Your appointment is saved and you're earning points on every visit.
+              </div>
+              <GoldButton onClick={() => router.push("/customer/bookings")}>View My Appointments</GoldButton>
+            </>
+          ) : (
+            <>
+              <div className="mb-1 text-center font-headline text-lg">REQUEST SENT!</div>
+              <div className="mb-[22px] text-center text-xs leading-relaxed text-muted">
+                Save this appointment and start earning 10 points per $1 toward a free cut — just add your name, phone, and a password.
+              </div>
+
+              <input
+                className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                value={gName}
+                onChange={(e) => setGName(e.target.value)}
+                placeholder="Your name"
+              />
+              <input
+                className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                value={gPhone}
+                onChange={(e) => setGPhone(e.target.value)}
+                placeholder="Phone number"
+                type="tel"
+              />
+              <input
+                className="mb-[18px] w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                value={gPassword}
+                onChange={(e) => setGPassword(e.target.value)}
+                placeholder="Password"
+                type="password"
+              />
+
+              {convertError && <div className="mb-3 text-[12.5px] text-error">{convertError}</div>}
+
+              <div className="mb-2.5">
+                <GoldButton disabled={converting || !gPhone.trim() || !gPassword.trim()} onClick={convertGuestAccount}>
+                  {converting ? "Saving…" : "Save My Appointment & Start Earning"}
+                </GoldButton>
+              </div>
+              <GhostButton onClick={() => router.push("/customer/bookings")}>Skip for now</GhostButton>
+            </>
+          )}
         </div>
       )}
     </div>

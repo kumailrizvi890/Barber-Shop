@@ -44,9 +44,17 @@ textarea {
   background-size: 100% 40px;
 }
 
-.marquee-track {
-  display: flex;
-  width: max-content;
+@keyframes marquee-precise {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-1 * var(--marquee-w)), 0, 0); }
+}
+
+/* Faint structural grid for the landing page's "futuristic" backdrop. */
+.grid-texture {
+  background-image:
+    linear-gradient(rgba(212, 175, 55, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
 .app-shell {

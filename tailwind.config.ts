@@ -39,7 +39,6 @@ const config: Config = {
         floatSlow: { "0%, 100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-6px)" } },
         slideDown: { from: { transform: "translateY(-12px)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
         dotPing: { "0%, 100%": { transform: "scale(1)" }, "50%": { transform: "scale(1.3)" } },
-        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
       animation: {
         poleScroll: "poleScroll 1.1s linear infinite",
@@ -48,7 +47,6 @@ const config: Config = {
         floatSlow: "floatSlow 3s ease-in-out infinite",
         slideDown: "slideDown 0.2s ease",
         dotPing: "dotPing 1.4s ease-in-out infinite",
-        marquee: "marquee 18s linear infinite",
       },
     },
   },

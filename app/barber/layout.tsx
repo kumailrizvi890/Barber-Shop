@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppProvider, useApp } from "@/lib/context/AppContext";
 import { createClient } from "@/lib/supabase/client";
 import { TabBar } from "@/components/TabBar";
@@ -8,7 +9,12 @@ import { TabBar } from "@/components/TabBar";
 function Shell({ children }: { children: React.ReactNode }) {
   const { profile, loading } = useApp();
   const supabase = createClient();
+  const router = useRouter();
   const [hasPending, setHasPending] = useState(false);
+
+  useEffect(() => {
+    if (!loading && (!profile || profile.role !== "barber")) router.push("/auth");
+  }, [loading, profile, router]);
 
   useEffect(() => {
     if (!profile) return;
@@ -20,7 +26,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       .then(({ count }) => setHasPending(!!count && count > 0));
   }, [profile, supabase]);
 
-  if (loading) {
+  if (loading || !profile || profile.role !== "barber") {
     return (
       <div className="app-shell items-center justify-center">
         <div className="text-sm text-muted">Loading…</div>
@@ -32,7 +38,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="app-shell">
       <div className="flex shrink-0 items-center justify-between px-5 pb-1 pt-14">
         <div className="font-headline text-[17px] tracking-tight">
-          FADE <span className="text-gold">HOUSE</span>{" "}
+          FADE <span className="text-gold">KINGS</span>{" "}
           <span className="font-body text-[10px] font-normal text-muted">BARBER</span>
         </div>
         <div

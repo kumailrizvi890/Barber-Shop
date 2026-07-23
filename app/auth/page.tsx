@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { initialsFor } from "@/lib/slots";
-import { Wordmark, BarberPole } from "@/components/BarberPole";
-import { GoldButton } from "@/components/UI";
+import { toE164 } from "@/lib/phone";
+import { Wordmark } from "@/components/BarberPole";
+import { Marquee } from "@/components/Marquee";
+import { Hero3DGate } from "@/components/Hero3DGate";
+import { GoldButton, GhostButton } from "@/components/UI";
 
 type DraftService = { id: number; name: string; price: number };
 
@@ -16,7 +19,7 @@ const FEATURES = [
     title: "Book in seconds",
     sub: "Live chair availability, no calls",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="3" y="5" width="18" height="16" rx="2" stroke="#D4AF37" strokeWidth="2" />
         <path d="M3 10h18M8 3v4M16 3v4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" />
       </svg>
@@ -26,7 +29,7 @@ const FEATURES = [
     title: "Real barbers, real reviews",
     sub: "Pick your chair by rating & style",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M12 2l2.6 6.5L21 9l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.6 3 9l6.4-.5L12 2z" stroke="#D4AF37" strokeWidth="2" strokeLinejoin="round" />
       </svg>
     ),
@@ -35,14 +38,14 @@ const FEATURES = [
     title: "Earn rewards every visit",
     sub: "Points on every cut, free cuts on us",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M20 6L9 17l-5-5" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
 ];
 
-export default function AuthPage() {
+function AuthCard() {
   const router = useRouter();
   const supabase = createClient();
 
@@ -71,13 +74,6 @@ export default function AuthPage() {
     (isSignup && !name.trim()) ||
     (isBarberSignup && (!location.trim() || services.length === 0));
 
-  function toE164(raw: string) {
-    const digits = raw.replace(/[^\d+]/g, "");
-    if (digits.startsWith("+")) return digits;
-    if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
-    return "+1" + digits;
-  }
-
   function addService() {
     const price = parseFloat(svcPrice);
     if (!svcName.trim() || !price) return;
@@ -87,6 +83,10 @@ export default function AuthPage() {
   }
   function removeService(id: number) {
     setServices((s) => s.filter((d) => d.id !== id));
+  }
+
+  function browseAsGuest() {
+    router.push("/customer/home");
   }
 
   async function continueAuth() {
@@ -145,155 +145,169 @@ export default function AuthPage() {
     "mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]";
 
   return (
-    <div className="app-shell">
-      <div className="h-full overflow-auto">
-        <div className="px-6 pb-[30px] pt-14">
-          <div className="mb-[22px]">
-            <Wordmark size={20} />
+    <div className="w-full rounded-[24px] border border-gold/20 bg-cardalt/90 p-6 shadow-2xl backdrop-blur-xl sm:p-7">
+      <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-inputbg p-1">
+        <button
+          onClick={() => setMode("login")}
+          className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
+          style={{ background: mode === "login" ? "#D4AF37" : "transparent", color: mode === "login" ? "#0a0a0a" : "#8f8f89" }}
+        >
+          Log In
+        </button>
+        <button
+          onClick={() => setMode("signup")}
+          className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
+          style={{ background: mode === "signup" ? "#D4AF37" : "transparent", color: mode === "signup" ? "#0a0a0a" : "#8f8f89" }}
+        >
+          Sign Up
+        </button>
+      </div>
+
+      <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">I AM A</div>
+      <div className="mb-4 flex gap-2.5">
+        {(["customer", "barber"] as const).map((r) => (
+          <button
+            key={r}
+            onClick={() => setRole(r)}
+            className="flex-1 rounded-xl py-[13px] text-[13px] font-extrabold capitalize"
+            style={{
+              background: role === r ? "rgba(212,175,55,0.12)" : "transparent",
+              border: `1px solid ${role === r ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.1)"}`,
+              color: role === r ? "#D4AF37" : "#a3a39c",
+            }}
+          >
+            {r}
+          </button>
+        ))}
+      </div>
+
+      {isSignup && (
+        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} placeholder={role === "barber" ? "Full name" : "Your name"} />
+      )}
+
+      {isBarberSignup && (
+        <>
+          <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" />
+          <input className={inputClass} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Shop location / address" />
+          <textarea
+            className={inputClass + " mb-[14px]"}
+            rows={2}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder="Short bio — your style, experience..."
+          />
+
+          <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">SERVICES & RATES</div>
+          <div className="mb-2.5 flex flex-col gap-1.5">
+            {services.map((s) => (
+              <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-white/[0.08] bg-inputbg px-3 py-2.5">
+                <div className="flex-1 text-[13px] font-bold">{s.name}</div>
+                <div className="text-[13px] font-bold text-gold">${s.price}</div>
+                <div onClick={() => removeService(s.id)} className="cursor-pointer px-0.5 text-[13px] text-muted">✕</div>
+              </div>
+            ))}
+          </div>
+          <div className="mb-4 flex gap-2">
+            <input
+              className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-white/10 bg-inputbg px-3 py-[11px] text-[13px] outline-none"
+              value={svcName}
+              onChange={(e) => setSvcName(e.target.value)}
+              placeholder="Service (e.g. Skin Fade)"
+            />
+            <input
+              className="w-14 box-border rounded-[10px] border border-white/10 bg-inputbg px-2 py-[11px] text-[13px] outline-none"
+              value={svcPrice}
+              onChange={(e) => setSvcPrice(e.target.value.replace(/[^0-9.]/g, ""))}
+              placeholder="$"
+            />
+            <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-gold text-lg font-extrabold text-bg">+</div>
+          </div>
+        </>
+      )}
+
+      {isBarberRole ? (
+        <input className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
+      ) : (
+        <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" type="tel" />
+      )}
+      <input className={inputClass + " mb-[18px]"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
+
+      {error && <div className="mb-3 text-[12.5px] text-error">{error}</div>}
+
+      <GoldButton disabled={cannotContinue} onClick={continueAuth}>
+        {loading ? "Please wait…" : isSignup ? "Create Account" : "Log In"}
+      </GoldButton>
+
+      {!isBarberRole && (
+        <>
+          <div className="my-4 flex items-center gap-3 text-[10.5px] font-bold tracking-wide text-faint">
+            <div className="h-px flex-1 bg-white/[0.08]" />
+            OR
+            <div className="h-px flex-1 bg-white/[0.08]" />
+          </div>
+          <GhostButton onClick={browseAsGuest}>Browse Without Signing Up</GhostButton>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <div className="relative min-h-dvh overflow-x-hidden bg-bg">
+      <div className="grid-texture pointer-events-none absolute inset-0" />
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-gold/[0.10] blur-[140px]" />
+      <div className="pointer-events-none absolute -right-32 top-1/3 h-[440px] w-[440px] rounded-full bg-gold/[0.07] blur-[130px]" />
+
+      <header className="relative z-10 mx-auto flex max-w-[1280px] items-center justify-between px-6 pt-8 sm:px-10">
+        <Wordmark size={20} sub="LYNNWOOD" />
+      </header>
+
+      <main className="relative z-10 mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-14 px-6 pb-20 pt-10 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pt-16">
+        <div className="relative min-w-0">
+          <div className="pointer-events-none absolute -right-16 -top-28 hidden h-[480px] w-[480px] lg:block">
+            <Hero3DGate />
           </div>
 
-          <div className="rounded-[20px] border border-gold/20 bg-cardalt p-5 shadow-2xl">
-            <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-inputbg p-1">
-              <button
-                onClick={() => setMode("login")}
-                className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
-                style={{ background: mode === "login" ? "#D4AF37" : "transparent", color: mode === "login" ? "#0a0a0a" : "#8f8f89" }}
-              >
-                Log In
-              </button>
-              <button
-                onClick={() => setMode("signup")}
-                className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
-                style={{ background: mode === "signup" ? "#D4AF37" : "transparent", color: mode === "signup" ? "#0a0a0a" : "#8f8f89" }}
-              >
-                Sign Up
-              </button>
+          <div className="relative">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/25 bg-gold/[0.06] px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-gold">
+              LYNNWOOD, WA — WALK-INS &amp; BOOKINGS
             </div>
-
-            <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">I AM A</div>
-            <div className="mb-4 flex gap-2.5">
-              {(["customer", "barber"] as const).map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className="flex-1 rounded-xl py-[13px] text-[13px] font-extrabold capitalize"
-                  style={{
-                    background: role === r ? "rgba(212,175,55,0.12)" : "transparent",
-                    border: `1px solid ${role === r ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.1)"}`,
-                    color: role === r ? "#D4AF37" : "#a3a39c",
-                  }}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-
-            {isSignup && (
-              <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} placeholder={role === "barber" ? "Full name" : "Your name"} />
-            )}
-
-            {isBarberSignup && (
-              <>
-                <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" />
-                <input className={inputClass} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Shop location / address" />
-                <textarea
-                  className={inputClass + " mb-[14px]"}
-                  rows={2}
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  placeholder="Short bio — your style, experience..."
-                />
-
-                <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">SERVICES & RATES</div>
-                <div className="mb-2.5 flex flex-col gap-1.5">
-                  {services.map((s) => (
-                    <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-white/[0.08] bg-inputbg px-3 py-2.5">
-                      <div className="flex-1 text-[13px] font-bold">{s.name}</div>
-                      <div className="text-[13px] font-bold text-gold">${s.price}</div>
-                      <div onClick={() => removeService(s.id)} className="cursor-pointer px-0.5 text-[13px] text-muted">✕</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mb-4 flex gap-2">
-                  <input
-                    className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-white/10 bg-inputbg px-3 py-[11px] text-[13px] outline-none"
-                    value={svcName}
-                    onChange={(e) => setSvcName(e.target.value)}
-                    placeholder="Service (e.g. Skin Fade)"
-                  />
-                  <input
-                    className="w-14 box-border rounded-[10px] border border-white/10 bg-inputbg px-2 py-[11px] text-[13px] outline-none"
-                    value={svcPrice}
-                    onChange={(e) => setSvcPrice(e.target.value.replace(/[^0-9.]/g, ""))}
-                    placeholder="$"
-                  />
-                  <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-gold text-lg font-extrabold text-bg">+</div>
-                </div>
-              </>
-            )}
-
-            {isBarberRole ? (
-              <input className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
-            ) : (
-              <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" type="tel" />
-            )}
-            <input className={inputClass + " mb-[18px]"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
-
-            {error && <div className="mb-3 text-[12.5px] text-error">{error}</div>}
-
-            <GoldButton disabled={cannotContinue} onClick={continueAuth}>
-              {loading ? "Please wait…" : isSignup ? "Create Account" : "Log In"}
-            </GoldButton>
-          </div>
-        </div>
-
-        <div className="relative overflow-hidden px-0 pb-[30px] pt-2">
-          <div className="pointer-events-none absolute -right-10 top-5 h-[320px] w-[120px] rotate-[18deg] overflow-hidden rounded-[60px] opacity-[0.14]">
-            <BarberPole width={120} height={320} radius={60} />
-          </div>
-
-          <div className="relative px-6">
-            <div className="font-headline text-[34px] leading-[1.02] tracking-tight">
+            <div className="font-headline text-[44px] leading-[1.02] tracking-tight sm:text-[58px] lg:text-[68px]">
               FRESH
               <br />
               FADES.
               <br />
               <span className="text-gold">FAST BOOKS.</span>
             </div>
-            <div className="mt-3 max-w-[260px] text-[12.5px] leading-[1.5] text-secondary">
-              Real chairs, real barbers, real-time availability — book your slot and roll up ready.
+            <div className="mt-5 max-w-[420px] text-[14.5px] leading-[1.6] text-secondary sm:text-base">
+              Fade Kings Barber Shop — Lynnwood's chair, on your schedule. Browse the crew and prices, or lock in a slot in under a minute. No account required to look around.
             </div>
           </div>
 
-          <div className="mt-[22px] overflow-hidden border-y border-gold/20 bg-gold/5 py-2.5">
-            <div className="marquee-track animate-marquee">
-              {[...TICKER_ITEMS, ...TICKER_ITEMS].map((t, i) => (
-                <div key={i} className="whitespace-nowrap px-[18px] font-headline text-[13px] tracking-wide text-gold">
-                  {t}
-                </div>
-              ))}
-            </div>
+          <div className="mt-8 overflow-hidden rounded-2xl border-y border-gold/20 bg-gold/5 py-3">
+            <Marquee items={TICKER_ITEMS} />
           </div>
 
-          <div className="flex gap-2.5 px-6 pt-[22px]">
+          <div className="mt-8 grid grid-cols-3 gap-3 sm:max-w-md">
             {[
               { big: "4.9★", small: "Avg Rating" },
-              { big: "12K+", small: "Cuts Done" },
-              { big: "40+", small: "Barbers" },
+              { big: "10K+", small: "Cuts Done" },
+              { big: "Local", small: "Est. Lynnwood" },
             ].map((s) => (
-              <div key={s.small} className="flex-1 rounded-[14px] border border-white/[0.07] bg-card px-1.5 py-3.5 text-center">
-                <div className="font-headline text-[19px] text-gold">{s.big}</div>
+              <div key={s.small} className="rounded-[14px] border border-white/[0.07] bg-card px-2 py-4 text-center">
+                <div className="font-headline text-[20px] text-gold">{s.big}</div>
                 <div className="mt-1 text-[10px] text-muted">{s.small}</div>
               </div>
             ))}
           </div>
 
-          <div className="px-6 pt-[26px]">
-            <div className="mb-3.5 font-headline text-sm tracking-wide">WHY FADE HOUSE</div>
-            <div className="flex flex-col gap-2.5">
+          <div className="mt-10">
+            <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
               {FEATURES.map((f) => (
                 <div key={f.title} className="flex items-center gap-3 rounded-[14px] border border-white/[0.07] bg-card px-3.5 py-[13px]">
-                  <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
+                  <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
                   <div>
                     <div className="text-[13px] font-bold">{f.title}</div>
                     <div className="text-[11.5px] text-muted">{f.sub}</div>
@@ -302,10 +316,16 @@ export default function AuthPage() {
               ))}
             </div>
           </div>
-
-          <div className="mt-[26px] text-center text-[10.5px] text-[#5a5a55]">FADE HOUSE © 2026</div>
         </div>
-      </div>
+
+        <div className="lg:sticky lg:top-16">
+          <AuthCard />
+        </div>
+      </main>
+
+      <footer className="relative z-10 border-t border-white/[0.06] py-6 text-center text-[10.5px] text-[#5a5a55]">
+        FADE KINGS BARBER SHOP — LYNNWOOD, WA © 2026
+      </footer>
     </div>
   );
 }

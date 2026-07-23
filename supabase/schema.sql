@@ -1,4 +1,4 @@
--- Fade House — Supabase schema
+-- Fade Kings Barber Shop (Lynnwood) — Supabase schema
 -- Run this in the Supabase SQL editor (or `supabase db push`) on a fresh project.
 
 create extension if not exists "pgcrypto";
@@ -25,6 +25,8 @@ create policy "users can insert their own profile"
   on profiles for insert to authenticated with check (auth.uid() = id);
 create policy "users can update their own profile"
   on profiles for update to authenticated using (auth.uid() = id);
+create policy "public can read barber profiles"
+  on profiles for select to anon using (role = 'barber');
 
 -- ── barber_services ──────────────────────────────────────────────────────
 create table if not exists barber_services (
@@ -41,6 +43,8 @@ create policy "services are readable by any authenticated user"
 create policy "barbers manage their own services"
   on barber_services for all to authenticated
   using (auth.uid() = barber_id) with check (auth.uid() = barber_id);
+create policy "public can read barber services"
+  on barber_services for select to anon using (true);
 
 -- ── availability ─────────────────────────────────────────────────────────
 create table if not exists availability (
@@ -58,6 +62,8 @@ create policy "availability is readable by any authenticated user"
 create policy "barbers manage their own availability"
   on availability for all to authenticated
   using (auth.uid() = barber_id) with check (auth.uid() = barber_id);
+create policy "public can read availability"
+  on availability for select to anon using (true);
 
 -- ── bookings ─────────────────────────────────────────────────────────────
 create table if not exists bookings (
