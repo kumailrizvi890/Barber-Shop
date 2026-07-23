@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import type { Notification } from "@/lib/types";
 
 function timeAgo(iso: string) {
@@ -40,36 +41,46 @@ export function NotificationBell({
         )}
       </div>
 
-      {open && (
-        <>
-          <div onClick={() => setOpen(false)} className="fixed inset-0 z-[80] bg-black/55" />
-          <div className="absolute left-4 right-4 top-[52px] z-[90] max-h-[70%] animate-slideDown overflow-auto rounded-2xl border border-gold/25 bg-card p-3.5 shadow-2xl">
-            <div className="mb-2.5 font-headline text-sm">NOTIFICATIONS</div>
-            {notifications.length === 0 ? (
-              <div className="py-6 text-center text-xs text-faint">No notifications yet.</div>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => onMarkRead(n.id)}
-                    className="flex cursor-pointer gap-2.5 rounded-xl border border-white/[0.06] p-[11px]"
-                    style={{ background: n.read ? "transparent" : "rgba(212,175,55,0.06)" }}
-                  >
-                    <div className="shrink-0 text-base">{n.icon}</div>
-                    <div className="flex-1">
-                      <div className="text-[12.5px] font-bold" style={{ color: n.read ? "#a3a39c" : "#f5f5f0" }}>
-                        {n.text}
-                      </div>
-                      <div className="mt-0.5 text-[10.5px] text-faint">{timeAgo(n.created_at)}</div>
-                    </div>
-                  </div>
-                ))}
+      {open &&
+        createPortal(
+          <div className="fixed inset-0 z-[200] flex flex-col bg-[#0a0a0a]">
+            <div className="flex shrink-0 items-center justify-between border-b border-white/[0.07] px-5 py-4">
+              <div className="font-headline text-base tracking-wide">NOTIFICATIONS</div>
+              <div
+                onClick={() => setOpen(false)}
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/10 text-lg text-primary"
+              >
+                ✕
               </div>
-            )}
-          </div>
-        </>
-      )}
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-auto px-5 py-4">
+              {notifications.length === 0 ? (
+                <div className="py-16 text-center text-xs text-faint">No notifications yet.</div>
+              ) : (
+                <div className="mx-auto flex w-full max-w-[560px] flex-col gap-2.5">
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      onClick={() => onMarkRead(n.id)}
+                      className="flex cursor-pointer gap-3 rounded-2xl border border-white/[0.07] p-4"
+                      style={{ background: n.read ? "transparent" : "rgba(212,175,55,0.06)" }}
+                    >
+                      <div className="shrink-0 text-xl">{n.icon}</div>
+                      <div className="flex-1">
+                        <div className="text-[14px] font-bold leading-snug" style={{ color: n.read ? "#a3a39c" : "#f5f5f0" }}>
+                          {n.text}
+                        </div>
+                        <div className="mt-1 text-[11.5px] text-faint">{timeAgo(n.created_at)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 }
