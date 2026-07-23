@@ -291,7 +291,7 @@ export default function AuthPage() {
 
           <div className="mt-8 grid grid-cols-3 gap-3 sm:max-w-md">
             {[
-              { big: "4.9★", small: "Avg Rating" },
+              { big: "4.6★", small: "Avg Rating" },
               { big: "10K+", small: "Cuts Done" },
               { big: "Local", small: "Est. Lynnwood" },
             ].map((s) => (
