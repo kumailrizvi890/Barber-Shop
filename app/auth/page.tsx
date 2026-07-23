@@ -62,13 +62,21 @@ export default function AuthPage() {
 
   const isSignup = mode === "signup";
   const isBarberSignup = isSignup && role === "barber";
+  const isBarberRole = role === "barber";
 
   const cannotContinue =
     loading ||
-    !email.trim() ||
+    (isBarberRole ? !email.trim() : !phone.trim()) ||
     !password.trim() ||
     (isSignup && !name.trim()) ||
     (isBarberSignup && (!location.trim() || services.length === 0));
+
+  function toE164(raw: string) {
+    const digits = raw.replace(/[^\d+]/g, "");
+    if (digits.startsWith("+")) return digits;
+    if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
+    return "+1" + digits;
+  }
 
   function addService() {
     const price = parseFloat(svcPrice);
@@ -86,18 +94,22 @@ export default function AuthPage() {
     setLoading(true);
     setError(null);
     try {
+      const e164Phone = isBarberRole ? null : toE164(phone);
+
       if (isSignup) {
-        const { data, error: signUpErr } = await supabase.auth.signUp({ email, password });
+        const { data, error: signUpErr } = isBarberRole
+          ? await supabase.auth.signUp({ email, password })
+          : await supabase.auth.signUp({ phone: e164Phone!, password });
         if (signUpErr) throw signUpErr;
         const userId = data.user?.id;
-        if (!userId) throw new Error("Check your inbox to confirm your email, then log in.");
+        if (!userId) throw new Error("Something went wrong creating your account.");
 
         const { error: profileErr } = await supabase.from("profiles").insert({
           id: userId,
           role,
           name: name.trim(),
-          email,
-          phone: role === "barber" ? phone.trim() : null,
+          email: isBarberRole ? email.trim() : null,
+          phone: isBarberRole ? phone.trim() : e164Phone,
           location: role === "barber" ? location.trim() : null,
           bio: role === "barber" ? bio.trim() : null,
           initials: initialsFor(name.trim()),
@@ -114,7 +126,9 @@ export default function AuthPage() {
 
         router.push(role === "barber" ? "/barber/requests" : "/customer/home");
       } else {
-        const { data, error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error: signInErr } = isBarberRole
+          ? await supabase.auth.signInWithPassword({ email, password })
+          : await supabase.auth.signInWithPassword({ phone: e164Phone!, password });
         if (signInErr) throw signInErr;
         const userId = data.user?.id;
         const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).single();
@@ -218,7 +232,11 @@ export default function AuthPage() {
               </>
             )}
 
-            <input className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
+            {isBarberRole ? (
+              <input className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
+            ) : (
+              <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" type="tel" />
+            )}
             <input className={inputClass + " mb-[18px]"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
 
             {error && <div className="mb-3 text-[12.5px] text-error">{error}</div>}

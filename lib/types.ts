@@ -6,7 +6,7 @@ export interface Profile {
   id: string;
   role: Role;
   name: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   location: string | null;
   bio: string | null;
