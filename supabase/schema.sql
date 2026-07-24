@@ -176,6 +176,38 @@ create policy "users read their own rewards"
 create policy "users manage their own rewards"
   on rewards for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+-- Barbers can read/write any customer's points: needed both to credit a
+-- completed cut and to deduct points when confirming a QR redemption.
+-- (A narrower per-booking-relationship policy here caused an unrelated
+-- permissive UPDATE policy on this table to stop matching at all when
+-- combined — keep this as a single broad policy, not two overlapping ones.)
+create policy "barbers can manage any customer points"
+  on rewards for all to authenticated
+  using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'barber'))
+  with check (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'barber'));
+
+-- ── reward_redemptions (QR-code free-cut redemption) ────────────────────
+create table if not exists reward_redemptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references profiles(id) on delete cascade,
+  points integer not null,
+  status text not null default 'pending' check (status in ('pending','used')),
+  created_at timestamptz not null default now(),
+  used_at timestamptz,
+  used_by uuid references profiles(id)
+);
+
+alter table reward_redemptions enable row level security;
+create policy "users can view their own redemptions"
+  on reward_redemptions for select to authenticated using (auth.uid() = user_id);
+create policy "users can create their own redemptions"
+  on reward_redemptions for insert to authenticated with check (auth.uid() = user_id);
+create policy "barbers can view any redemption"
+  on reward_redemptions for select to authenticated
+  using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'barber'));
+create policy "barbers can confirm redemptions"
+  on reward_redemptions for update to authenticated
+  using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'barber'));
 
 -- ── storage: barber "My Work" photos/videos ─────────────────────────────
 insert into storage.buckets (id, name, public)

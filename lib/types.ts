@@ -83,6 +83,20 @@ export interface Reward {
   points: number;
 }
 
+export type RedemptionStatus = "pending" | "used";
+
+export interface RewardRedemption {
+  id: string;
+  user_id: string;
+  points: number;
+  status: RedemptionStatus;
+  created_at: string;
+  used_at: string | null;
+  used_by: string | null;
+  // joined
+  customer?: Profile;
+}
+
 // Minimal Database type placeholder so @supabase/ssr generics are satisfied.
 // Replace with `supabase gen types typescript` output for full type safety.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

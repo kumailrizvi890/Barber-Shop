@@ -8,7 +8,7 @@ import { toE164 } from "@/lib/phone";
 import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
 import { Hero3DGate } from "@/components/Hero3DGate";
-import { GoldButton, GhostButton } from "@/components/UI";
+import { GoldButton } from "@/components/UI";
 
 type DraftService = { id: number; name: string; price: number };
 
@@ -85,7 +85,7 @@ function AuthCard() {
     setServices((s) => s.filter((d) => d.id !== id));
   }
 
-  function browseAsGuest() {
+  function bookNow() {
     router.push("/customer/home");
   }
 
@@ -146,6 +146,18 @@ function AuthCard() {
 
   return (
     <div className="w-full rounded-[24px] border border-gold/20 bg-cardalt/90 p-6 shadow-2xl backdrop-blur-xl sm:p-7">
+      <button
+        onClick={bookNow}
+        className="mb-4 flex w-full animate-pulseGold items-center justify-center gap-2 rounded-xl bg-gold py-[18px] text-[16px] font-extrabold text-bg transition-transform hover:scale-[1.015]"
+      >
+        Book Now <span aria-hidden>→</span>
+      </button>
+      <div className="mb-4 flex items-center gap-3 text-[10.5px] font-bold tracking-wide text-faint">
+        <div className="h-px flex-1 bg-white/[0.08]" />
+        OR LOG IN / SIGN UP
+        <div className="h-px flex-1 bg-white/[0.08]" />
+      </div>
+
       <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-inputbg p-1">
         <button
           onClick={() => setMode("login")}
@@ -237,17 +249,6 @@ function AuthCard() {
       <GoldButton disabled={cannotContinue} onClick={continueAuth}>
         {loading ? "Please wait…" : isSignup ? "Create Account" : "Log In"}
       </GoldButton>
-
-      {!isBarberRole && (
-        <>
-          <div className="my-4 flex items-center gap-3 text-[10.5px] font-bold tracking-wide text-faint">
-            <div className="h-px flex-1 bg-white/[0.08]" />
-            OR
-            <div className="h-px flex-1 bg-white/[0.08]" />
-          </div>
-          <GhostButton onClick={browseAsGuest}>Browse Without Signing Up</GhostButton>
-        </>
-      )}
     </div>
   );
 }

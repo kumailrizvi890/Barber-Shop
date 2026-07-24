@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Booking, Post, PostComment, Profile } from "@/lib/types";
+import type { Booking, Post, PostComment, Profile, RewardRedemption } from "@/lib/types";
 
 export async function notify(supabase: SupabaseClient, userId: string, text: string, icon: string) {
   await supabase.from("notifications").insert({ user_id: userId, text, icon, read: false });
@@ -90,17 +90,26 @@ export async function markCompleted(supabase: SupabaseClient, booking: Booking) 
     .update({ cuts_done: (barberProfile?.cuts_done ?? 0) + 1 })
     .eq("id", booking.barber_id);
 
+  // 10 points per dollar of the service they were booked for, credited the moment
+  // the barber marks the appointment complete — not gated on leaving a rating.
+  const pointsEarned = Math.round(booking.price * 10);
+  const { data: existingRewards } = await supabase.from("rewards").select("points").eq("user_id", booking.customer_id).single();
+  const nextPoints = (existingRewards?.points ?? 0) + pointsEarned;
+  const { error: rewardsError } = await supabase.from("rewards").upsert({ user_id: booking.customer_id, points: nextPoints });
+  if (rewardsError) throw rewardsError;
+
+  await notify(
+    supabase,
+    booking.customer_id,
+    `You earned ${pointsEarned} points for your ${booking.service_name} with ${booking.barber?.name ?? "your barber"}!`,
+    "🎉"
+  );
   await notify(supabase, booking.customer_id, `How was your cut? Rate your visit with ${booking.barber?.name ?? "your barber"}.`, "⭐");
 }
 
 export async function rateBooking(supabase: SupabaseClient, booking: Booking, rating: number) {
   const { error } = await supabase.from("bookings").update({ rating }).eq("id", booking.id);
   if (error) throw error;
-
-  const pointsEarned = Math.round(booking.price * 10);
-  const { data: existing } = await supabase.from("rewards").select("points").eq("user_id", booking.customer_id).single();
-  const nextPoints = (existing?.points ?? 0) + pointsEarned;
-  await supabase.from("rewards").upsert({ user_id: booking.customer_id, points: nextPoints });
 
   // Roll the new rating into the barber's average (simple running average over completed+rated bookings).
   const { data: ratedBookings } = await supabase
@@ -112,14 +121,54 @@ export async function rateBooking(supabase: SupabaseClient, booking: Booking, ra
     const avg = ratedBookings.reduce((sum, b) => sum + (b.rating ?? 0), 0) / ratedBookings.length;
     await supabase.from("profiles").update({ rating: Math.round(avg * 10) / 10 }).eq("id", booking.barber_id);
   }
-
-  await notify(supabase, booking.customer_id, `You earned ${pointsEarned} points for your last cut!`, "🎉");
 }
 
-export async function redeemReward(supabase: SupabaseClient, userId: string, currentPoints: number) {
-  if (currentPoints < 5000) return;
-  await supabase.from("rewards").update({ points: currentPoints - 5000 }).eq("user_id", userId);
-  await notify(supabase, userId, "Redeemed 5000 points for a free cut. Show this at checkout!", "🎁");
+// Redeeming doesn't spend points itself — it creates a pending redemption that
+// gets shown to the customer as a QR code. Points only actually leave the
+// balance once a barber scans/opens it and confirms (confirmRedemption below),
+// so a customer can't just claim a free cut without a barber verifying it.
+export async function createRedemption(supabase: SupabaseClient, userId: string, points: number): Promise<RewardRedemption> {
+  const { data: existing } = await supabase
+    .from("reward_redemptions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("status", "pending")
+    .maybeSingle();
+  if (existing) return existing as RewardRedemption;
+
+  const { data, error } = await supabase
+    .from("reward_redemptions")
+    .insert({ user_id: userId, points })
+    .select()
+    .single();
+  if (error) throw error;
+  return data as RewardRedemption;
+}
+
+export async function fetchRedemption(supabase: SupabaseClient, id: string): Promise<RewardRedemption | null> {
+  const { data, error } = await supabase
+    .from("reward_redemptions")
+    .select("*, customer:user_id(name, initials)")
+    .eq("id", id)
+    .single();
+  if (error) return null;
+  return data as RewardRedemption;
+}
+
+export async function confirmRedemption(supabase: SupabaseClient, redemption: RewardRedemption, barberId: string) {
+  const { data: rewardsRow } = await supabase.from("rewards").select("points").eq("user_id", redemption.user_id).single();
+  const nextPoints = Math.max(0, (rewardsRow?.points ?? 0) - redemption.points);
+  const { error: rewardsErr } = await supabase.from("rewards").update({ points: nextPoints }).eq("user_id", redemption.user_id);
+  if (rewardsErr) throw rewardsErr;
+
+  const { error } = await supabase
+    .from("reward_redemptions")
+    .update({ status: "used", used_at: new Date().toISOString(), used_by: barberId })
+    .eq("id", redemption.id)
+    .eq("status", "pending");
+  if (error) throw error;
+
+  await notify(supabase, redemption.user_id, "Your free cut was redeemed — enjoy!", "🎁");
 }
 
 export async function toggleBlockedSlot(
