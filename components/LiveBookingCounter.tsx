@@ -44,7 +44,7 @@ export function useLiveBookingCount(): number | null {
 export function LiveBookingCounter({ label = "Online Bookings" }: { label?: string }) {
   const count = useLiveBookingCount();
   return (
-    <div className="rounded-[14px] border border-white/[0.07] bg-card px-2 py-4 text-center">
+    <div className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
       <div className="font-headline text-[20px] text-gold">{count === null ? "—" : count.toLocaleString()}</div>
       <div className="mt-1 text-[10px] text-muted">{label}</div>
     </div>

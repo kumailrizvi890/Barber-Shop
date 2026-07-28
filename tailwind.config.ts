@@ -1,23 +1,39 @@
 import type { Config } from "tailwindcss";
 
+// Reads a "R G B" CSS custom property so Tailwind's opacity modifiers
+// (bg-gold/10, border-line/[0.07]) keep working across the light/dark
+// token swap in app/globals.css.
+function withOpacity(variable: string) {
+  return ({ opacityValue }: { opacityValue?: string }) =>
+    opacityValue === undefined ? `rgb(var(${variable}))` : `rgb(var(${variable}) / ${opacityValue})`;
+}
+
+// Tailwind's own Config type predates its documented function-value color
+// support, so the opacity-aware palette below is cast through `unknown` —
+// this is the standard pattern for CSS-variable-backed themes, not a hack.
+const colors = {
+  bg: withOpacity("--color-bg"),
+  card: withOpacity("--color-card"),
+  cardalt: withOpacity("--color-cardalt"),
+  inputbg: withOpacity("--color-inputbg"),
+  surface2: withOpacity("--color-surface2"),
+  line: withOpacity("--color-line"),
+  gold: withOpacity("--color-gold"),
+  goldsolid: withOpacity("--color-goldsolid"),
+  golddark: withOpacity("--color-golddark"),
+  success: withOpacity("--color-success"),
+  error: withOpacity("--color-error"),
+  primary: withOpacity("--color-primary"),
+  secondary: withOpacity("--color-secondary"),
+  muted: withOpacity("--color-muted"),
+  faint: withOpacity("--color-faint"),
+} as unknown as Record<string, string>;
+
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      colors: {
-        bg: "#0a0a0a",
-        card: "#141414",
-        cardalt: "#111111",
-        inputbg: "#1c1c1c",
-        gold: "#D4AF37",
-        golddark: "#a8842a",
-        success: "#5fce89",
-        error: "#e07070",
-        primary: "#f5f5f0",
-        secondary: "#a3a39c",
-        muted: "#8f8f89",
-        faint: "#6b6b66",
-      },
+      colors,
       fontFamily: {
         headline: ["var(--font-archivo)", "sans-serif"],
         body: ["var(--font-inter)", "system-ui", "sans-serif"],
@@ -27,8 +43,8 @@ const config: Config = {
       },
       keyframes: {
         pulseGold: {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(212,175,55,0.55)" },
-          "50%": { boxShadow: "0 0 0 10px rgba(212,175,55,0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgb(var(--color-goldsolid) / 0.55)" },
+          "50%": { boxShadow: "0 0 0 10px rgb(var(--color-goldsolid) / 0)" },
         },
         checkPop: {
           "0%": { transform: "scale(0)", opacity: "0" },

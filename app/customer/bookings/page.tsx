@@ -49,7 +49,7 @@ export default function BookingsPage() {
       {bookings.length === 0 ? (
         <div className="py-[60px] text-center text-faint">
           <div className="mb-3.5 text-[13px]">No appointments yet.</div>
-          <button onClick={() => router.push("/customer/book")} className="rounded-xl bg-gold px-[22px] py-3 text-[13.5px] font-extrabold text-bg">
+          <button onClick={() => router.push("/customer/book")} className="rounded-xl bg-goldsolid px-[22px] py-3 text-[13.5px] font-extrabold text-bg">
             Book your first cut
           </button>
         </div>
@@ -72,13 +72,13 @@ export default function BookingsPage() {
                   <StatusBadge status={a.status} />
                 </div>
                 {needsRating && (
-                  <div className="mt-3 border-t border-white/[0.07] pl-1.5 pt-3">
+                  <div className="mt-3 border-t border-line/[0.07] pl-1.5 pt-3">
                     <div className="mb-2 text-[11.5px] text-muted">How was your cut? Rate it:</div>
                     <StarRow value={0} onRate={(n) => rate(a, n)} />
                   </div>
                 )}
                 {a.rating ? (
-                  <div className="mt-3 border-t border-white/[0.07] pl-1.5 pt-3 text-[13px] font-bold text-gold">
+                  <div className="mt-3 border-t border-line/[0.07] pl-1.5 pt-3 text-[13px] font-bold text-gold">
                     {"★".repeat(a.rating)} <span className="font-medium text-muted">rated</span>
                   </div>
                 ) : null}

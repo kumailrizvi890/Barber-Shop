@@ -43,7 +43,7 @@ export default function RewardsPage() {
     return (
       <div className="px-5 pb-7">
         <div className="mb-[18px] font-headline text-[19px]">REWARDS</div>
-        <div className="rounded-[20px] border border-gold/25 p-[26px_20px] text-center" style={{ background: "linear-gradient(160deg,#1a1a1a,#0d0d0d)" }}>
+        <div className="rounded-[20px] border border-gold/25 p-[26px_20px] text-center" style={{ background: "linear-gradient(160deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}>
           <div className="mb-2 text-[13px] font-bold">You're browsing as a guest</div>
           <div className="mb-5 text-xs leading-relaxed text-secondary">
             Book your first cut and create an account to start earning 10 points per $1 — 5000 points unlocks a free cut.
@@ -73,7 +73,7 @@ export default function RewardsPage() {
     <div className="px-5 pb-7">
       <div className="mb-[18px] font-headline text-[19px]">REWARDS</div>
 
-      <div className="mb-5 rounded-[20px] border border-gold/30 p-[22px] text-center" style={{ background: "linear-gradient(160deg,#1a1a1a,#0d0d0d)" }}>
+      <div className="mb-5 rounded-[20px] border border-gold/30 p-[22px] text-center" style={{ background: "linear-gradient(160deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}>
         <div className="text-[11.5px] font-bold tracking-wide text-muted">YOUR POINTS</div>
         <div className="my-1.5 font-headline text-[40px] text-gold">{loading ? "—" : points}</div>
         <div className="mb-3.5 text-xs text-secondary">
@@ -83,10 +83,10 @@ export default function RewardsPage() {
             ? "You've unlocked a free cut!"
             : `${remaining} more points to a free cut`}
         </div>
-        <div className="h-2.5 overflow-hidden rounded-md bg-[#232323]">
+        <div className="h-2.5 overflow-hidden rounded-md bg-surface2">
           <div
             className="h-full rounded-md transition-all duration-500"
-            style={{ width: `${pct}%`, background: "linear-gradient(90deg,#a8842a,#D4AF37)" }}
+            style={{ width: `${pct}%`, background: "linear-gradient(90deg, rgb(var(--color-golddark)), rgb(var(--color-goldsolid)))" }}
           />
         </div>
         <div className="mt-[18px]">
@@ -101,7 +101,7 @@ export default function RewardsPage() {
       </div>
 
       <div className="mb-2.5 text-[11.5px] font-bold tracking-wide text-muted">HOW IT WORKS</div>
-      <div className="mb-5 flex flex-col gap-2 rounded-2xl border border-white/[0.07] bg-card p-4 text-[12.5px] leading-snug text-secondary">
+      <div className="mb-5 flex flex-col gap-2 rounded-2xl border border-line/[0.07] bg-card p-4 text-[12.5px] leading-snug text-secondary">
         <div>
           • Earn <span className="font-bold text-gold">10 points per $1</span> spent, credited as soon as your barber marks the appointment complete.
         </div>

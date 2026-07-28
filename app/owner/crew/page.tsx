@@ -68,14 +68,14 @@ export default function OwnerCrewPage() {
                   <button
                     disabled={busy === b.id}
                     onClick={() => approve(b.id)}
-                    className="flex-1 rounded-[10px] bg-gold py-[11px] text-[13px] font-extrabold text-bg disabled:opacity-50"
+                    className="flex-1 rounded-[10px] bg-goldsolid py-[11px] text-[13px] font-extrabold text-bg disabled:opacity-50"
                   >
                     Approve
                   </button>
                   <button
                     disabled={busy === b.id}
                     onClick={() => reject(b.id)}
-                    className="flex-1 rounded-[10px] border border-white/15 py-[11px] text-[13px] font-bold text-secondary disabled:opacity-50"
+                    className="flex-1 rounded-[10px] border border-line/15 py-[11px] text-[13px] font-bold text-secondary disabled:opacity-50"
                   >
                     Reject
                   </button>
@@ -94,7 +94,7 @@ export default function OwnerCrewPage() {
           <div
             key={b.id}
             onClick={() => router.push(`/owner/crew/${b.id}`)}
-            className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-[12px_14px]"
+            className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-line/[0.07] bg-card p-[12px_14px]"
           >
             <BarberAvatar initials={b.initials} size={48} rounded={12} />
             <div className="min-w-0 flex-1">
@@ -133,7 +133,7 @@ export default function OwnerCrewPage() {
                 <button
                   disabled={busy === b.id}
                   onClick={() => approve(b.id)}
-                  className="rounded-lg border border-white/15 px-3 py-1.5 text-[11.5px] font-bold text-secondary disabled:opacity-50"
+                  className="rounded-lg border border-line/15 px-3 py-1.5 text-[11.5px] font-bold text-secondary disabled:opacity-50"
                 >
                   Approve instead
                 </button>

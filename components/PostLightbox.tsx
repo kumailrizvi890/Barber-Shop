@@ -120,10 +120,10 @@ export function PostLightbox({
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex flex-col bg-[#0a0a0a]" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex flex-col bg-bg" onClick={onClose}>
       <div className="flex shrink-0 items-center justify-between px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
         <div className="text-[13px] font-bold text-primary">{barberName}</div>
-        <div onClick={onClose} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/10 text-lg text-primary">
+        <div onClick={onClose} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-line/10 text-lg text-primary">
           ✕
         </div>
       </div>
@@ -143,7 +143,7 @@ export function PostLightbox({
             <div
               onClick={handleLike}
               className="flex cursor-pointer items-center gap-1.5 text-[13px] font-bold"
-              style={{ color: likedByMe ? "#D4AF37" : "#f5f5f0" }}
+              style={{ color: likedByMe ? "rgb(var(--color-gold))" : "rgb(var(--color-primary))" }}
             >
               <span style={{ fontSize: 18 }}>{likedByMe ? "♥" : "♡"}</span>
               {likeCount}
@@ -190,7 +190,7 @@ export function PostLightbox({
 
           <div className="flex gap-2">
             <input
-              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-[13px] outline-none placeholder:text-[#5a5a55]"
+              className="min-w-0 flex-1 rounded-xl border border-line/10 bg-inputbg px-3.5 py-[11px] text-[13px] outline-none placeholder:text-faint"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleComment()}
@@ -198,7 +198,7 @@ export function PostLightbox({
             />
             <div
               onClick={handleComment}
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gold px-4 text-[13px] font-extrabold text-bg"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-xl bg-goldsolid px-4 text-[13px] font-extrabold text-bg"
               style={{ opacity: busy ? 0.6 : 1 }}
             >
               Post

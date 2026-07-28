@@ -29,7 +29,7 @@ export default function CustomerHomePage() {
 
   return (
     <div className="px-5 pb-7">
-      <div className="relative mb-5 overflow-hidden rounded-[20px] border border-gold/25 p-[26px_20px]" style={{ background: "linear-gradient(160deg,#1a1a1a,#0d0d0d)" }}>
+      <div className="relative mb-5 overflow-hidden rounded-[20px] border border-gold/25 p-[26px_20px]" style={{ background: "linear-gradient(160deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}>
         <div className="relative flex items-center gap-[18px]">
           <div className="animate-floatSlow">
             <BarberLottie height={104} />
@@ -49,7 +49,7 @@ export default function CustomerHomePage() {
         </div>
         <button
           onClick={() => goBook()}
-          className="mt-[18px] w-full animate-pulseGold rounded-xl bg-gold py-[14px] text-[15px] font-extrabold text-bg"
+          className="mt-[18px] w-full animate-pulseGold rounded-xl bg-goldsolid py-[14px] text-[15px] font-extrabold text-bg"
         >
           Book Now →
         </button>
@@ -65,7 +65,7 @@ export default function CustomerHomePage() {
           <div
             key={b.id}
             onClick={() => viewProfile(b.id)}
-            className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-[12px_14px]"
+            className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-line/[0.07] bg-card p-[12px_14px]"
           >
             <BarberAvatar initials={b.initials} size={52} rounded={12} />
             <div className="min-w-0 flex-1">

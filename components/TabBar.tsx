@@ -111,7 +111,7 @@ export function TabBar({ role, badge }: { role: "customer" | "barber" | "owner";
   const pathname = usePathname();
   const tabs = role === "customer" ? CUSTOMER_TABS : role === "barber" ? BARBER_TABS : OWNER_TABS;
   return (
-    <div className="flex shrink-0 border-t border-white/[0.08] bg-[#0d0d0d] px-2.5 pb-1 pt-2">
+    <div className="flex shrink-0 border-t border-line/[0.08] bg-cardalt px-2.5 pb-1 pt-2">
       {tabs.map((t) => {
         const active = pathname?.startsWith(t.href);
         return (
@@ -119,14 +119,14 @@ export function TabBar({ role, badge }: { role: "customer" | "barber" | "owner";
             key={t.href}
             href={t.href}
             className="relative flex-1 py-1.5 text-center"
-            style={{ color: active ? "#D4AF37" : "#6b6b66" }}
+            style={{ color: active ? "rgb(var(--color-gold))" : "rgb(var(--color-faint))" }}
           >
             <div className="flex justify-center">
               <Icon>{t.icon}</Icon>
             </div>
             <div className="mt-1 text-[10px] font-bold">{t.label}</div>
             {badge && (t.label === "Requests" || t.label === "Crew") && (
-              <div className="absolute right-[calc(50%-22px)] top-0.5 h-2 w-2 rounded-full bg-gold" />
+              <div className="absolute right-[calc(50%-22px)] top-0.5 h-2 w-2 rounded-full bg-goldsolid" />
             )}
           </Link>
         );

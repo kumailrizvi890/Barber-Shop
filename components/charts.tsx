@@ -33,7 +33,7 @@ export function BarChart({
               )}
               <div
                 title={`${d.label}: ${valueLabel(d.value)}`}
-                className="w-full max-w-[22px] rounded-t-[4px] bg-gold transition-[opacity] hover:opacity-80"
+                className="w-full max-w-[22px] rounded-t-[4px] bg-goldsolid transition-[opacity] hover:opacity-80"
                 style={{ height: `${Math.max(3, (d.value / max) * 100)}%`, opacity: d.value > 0 ? 1 : 0.12 }}
               />
             </div>
@@ -62,9 +62,9 @@ export function HBarChart({
             <span className="font-bold text-secondary">{d.label}</span>
             <span className="font-bold text-gold">{valueLabel(d.value)}</span>
           </div>
-          <div className="h-[7px] w-full overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="h-[7px] w-full overflow-hidden rounded-full bg-line/[0.08]">
             <div
-              className="h-full rounded-full bg-gold transition-[width]"
+              className="h-full rounded-full bg-goldsolid transition-[width]"
               style={{ width: `${Math.max(3, (d.value / max) * 100)}%` }}
             />
           </div>
@@ -93,7 +93,7 @@ export function DonutChart({ data }: { data: { status: string; count: number }[]
   return (
     <div className="flex items-center gap-5">
       <svg width={140} height={140} viewBox="0 0 140 140" className="shrink-0 -rotate-90">
-        <circle cx={70} cy={70} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+        <circle cx={70} cy={70} r={r} fill="none" stroke="rgb(var(--color-line) / 0.10)" strokeWidth={strokeWidth} />
         {segments.map((s, i) => (
           <circle
             key={i}

@@ -63,7 +63,7 @@ export default function RedeemPage() {
           <div className="mb-5 text-xs text-muted">{redemption.points.toLocaleString()} points → Free Cut</div>
 
           {redemption.status === "used" ? (
-            <div className="rounded-xl border border-white/[0.07] bg-inputbg p-4 text-[13px] text-secondary">
+            <div className="rounded-xl border border-line/[0.07] bg-inputbg p-4 text-[13px] text-secondary">
               ✅ Redeemed{redemption.used_at ? ` on ${new Date(redemption.used_at).toLocaleString()}` : ""}.
             </div>
           ) : viewerIsBarber ? (
@@ -71,7 +71,7 @@ export default function RedeemPage() {
               {confirming ? "Confirming…" : "Confirm & Redeem"}
             </GoldButton>
           ) : (
-            <div className="rounded-xl border border-white/[0.07] bg-inputbg p-4 text-[13px] text-secondary">
+            <div className="rounded-xl border border-line/[0.07] bg-inputbg p-4 text-[13px] text-secondary">
               Show this screen to your barber — they'll confirm it to redeem your free cut.
             </div>
           )}

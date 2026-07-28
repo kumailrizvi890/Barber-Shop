@@ -21,8 +21,8 @@ export function RedeemQRModal({
   }, [redemptionId]);
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a0a0a] px-6 text-center">
-      <div onClick={onClose} className="absolute right-5 top-5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/10 text-lg text-primary">
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-bg px-6 text-center">
+      <div onClick={onClose} className="absolute right-5 top-5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-line/10 text-lg text-primary">
         ✕
       </div>
       <div className="mb-1 font-headline text-lg">SHOW THIS TO YOUR BARBER</div>

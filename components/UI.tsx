@@ -11,8 +11,8 @@ export function GoldButton({
       className={
         "w-full rounded-xl py-[15px] font-body font-extrabold text-[15px] transition-colors " +
         (props.disabled
-          ? "bg-[#2a2a26] text-faint cursor-not-allowed"
-          : "bg-gold text-bg cursor-pointer hover:bg-[#e0bc47]") +
+          ? "bg-surface2 text-faint cursor-not-allowed"
+          : "bg-goldsolid text-bg cursor-pointer hover:opacity-90") +
         " " +
         className
       }
@@ -31,7 +31,7 @@ export function GhostButton({
     <button
       {...props}
       className={
-        "w-full rounded-xl py-[13px] font-body font-semibold text-[13.5px] border border-white/15 bg-transparent text-secondary cursor-pointer hover:border-white/30 " +
+        "w-full rounded-xl py-[13px] font-body font-semibold text-[13.5px] border border-line/15 bg-transparent text-secondary cursor-pointer hover:border-line/30 " +
         className
       }
     >
@@ -50,7 +50,7 @@ export function Card({
   style?: CSSProperties;
 }) {
   return (
-    <div style={style} className={"bg-card border border-white/[0.07] rounded-2xl " + className}>
+    <div style={style} className={"bg-card border border-line/[0.07] rounded-2xl " + className}>
       {children}
     </div>
   );
@@ -72,7 +72,7 @@ export function BarberAvatar({ initials, size = 52, rounded = 12 }: { initials: 
         borderRadius: rounded,
         fontSize: size * 0.28,
         backgroundImage:
-          "repeating-linear-gradient(135deg, #232323 0px, #232323 6px, #1a1a1a 6px, #1a1a1a 12px)",
+          "repeating-linear-gradient(135deg, rgb(var(--color-surface2)) 0px, rgb(var(--color-surface2)) 6px, rgb(var(--color-card)) 6px, rgb(var(--color-card)) 12px)",
       }}
     >
       {initials}
@@ -81,10 +81,10 @@ export function BarberAvatar({ initials, size = 52, rounded = 12 }: { initials: 
 }
 
 const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }> = {
-  pending: { bg: "rgba(255,255,255,0.08)", color: "#a3a39c", label: "PENDING" },
-  approved: { bg: "rgba(95,206,137,0.15)", color: "#5fce89", label: "APPROVED" },
-  declined: { bg: "rgba(224,112,112,0.15)", color: "#e07070", label: "DECLINED" },
-  completed: { bg: "rgba(212,175,55,0.15)", color: "#D4AF37", label: "COMPLETED" },
+  pending: { bg: "rgb(var(--color-line) / 0.08)", color: "rgb(var(--color-secondary))", label: "PENDING" },
+  approved: { bg: "rgb(var(--color-success) / 0.15)", color: "rgb(var(--color-success))", label: "APPROVED" },
+  declined: { bg: "rgb(var(--color-error) / 0.15)", color: "rgb(var(--color-error))", label: "DECLINED" },
+  completed: { bg: "rgb(var(--color-goldsolid) / 0.15)", color: "rgb(var(--color-gold))", label: "COMPLETED" },
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -100,7 +100,14 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 export function statusStripeColor(status: string) {
-  return { pending: "#6b6b66", approved: "#5fce89", declined: "#e07070", completed: "#D4AF37" }[status] ?? "#6b6b66";
+  return (
+    {
+      pending: "rgb(var(--color-faint))",
+      approved: "rgb(var(--color-success))",
+      declined: "rgb(var(--color-error))",
+      completed: "rgb(var(--color-goldsolid))",
+    }[status] ?? "rgb(var(--color-faint))"
+  );
 }
 
 export function StarRow({
@@ -119,7 +126,7 @@ export function StarRow({
           key={n}
           onClick={() => onRate?.(n)}
           style={{ fontSize: size, lineHeight: 1, cursor: onRate ? "pointer" : "default" }}
-          className={n <= value ? "text-gold" : "text-[#3a3a36]"}
+          className={n <= value ? "text-gold" : "text-line/25"}
         >
           ★
         </span>

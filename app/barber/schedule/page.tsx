@@ -92,18 +92,18 @@ export default function SchedulePage() {
       <div className="mb-1 font-headline text-[19px]">SCHEDULE</div>
       <div className="mb-3.5 text-xs text-muted">Manage bookings & weekly availability</div>
 
-      <div className="mb-[18px] flex rounded-xl border border-white/[0.07] bg-card p-1">
+      <div className="mb-[18px] flex rounded-xl border border-line/[0.07] bg-card p-1">
         <button
           onClick={() => setView("bookings")}
           className="flex-1 rounded-[9px] py-[9px] text-xs font-extrabold"
-          style={{ background: view === "bookings" ? "#D4AF37" : "transparent", color: view === "bookings" ? "#0a0a0a" : "#8f8f89" }}
+          style={{ background: view === "bookings" ? "rgb(var(--color-goldsolid))" : "transparent", color: view === "bookings" ? "rgb(var(--color-bg))" : "rgb(var(--color-muted))" }}
         >
           Bookings
         </button>
         <button
           onClick={() => setView("availability")}
           className="flex-1 rounded-[9px] py-[9px] text-xs font-extrabold"
-          style={{ background: view === "availability" ? "#D4AF37" : "transparent", color: view === "availability" ? "#0a0a0a" : "#8f8f89" }}
+          style={{ background: view === "availability" ? "rgb(var(--color-goldsolid))" : "transparent", color: view === "availability" ? "rgb(var(--color-bg))" : "rgb(var(--color-muted))" }}
         >
           Availability
         </button>
@@ -117,7 +117,7 @@ export default function SchedulePage() {
         ) : (
           <div className="flex flex-col gap-3">
             {bookings.map((a) => (
-              <div key={a.id} className="rounded-2xl border border-white/[0.08] bg-card p-4">
+              <div key={a.id} className="rounded-2xl border border-line/[0.08] bg-card p-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="text-[15px] font-extrabold">{(a as any).customer?.name}</div>
@@ -136,7 +136,7 @@ export default function SchedulePage() {
                     disabled={a.reminder_sent || a.status !== "approved"}
                     onClick={() => remind(a)}
                     className="flex-1 rounded-[10px] border border-gold/40 py-2.5 text-xs font-bold disabled:opacity-40"
-                    style={{ color: "#D4AF37" }}
+                    style={{ color: "rgb(var(--color-gold))" }}
                   >
                     {a.reminder_sent ? "Reminder Sent" : "Send Reminder"}
                   </button>
@@ -144,7 +144,7 @@ export default function SchedulePage() {
                     disabled={a.status !== "approved"}
                     onClick={() => complete(a)}
                     className="flex-1 rounded-[10px] py-2.5 text-xs font-extrabold disabled:opacity-40"
-                    style={{ background: a.status === "completed" ? "rgba(212,175,55,0.15)" : "#D4AF37", color: a.status === "completed" ? "#D4AF37" : "#0a0a0a" }}
+                    style={{ background: a.status === "completed" ? "rgb(var(--color-goldsolid) / 0.15)" : "rgb(var(--color-goldsolid))", color: a.status === "completed" ? "rgb(var(--color-gold))" : "rgb(var(--color-bg))" }}
                   >
                     {a.status === "completed" ? "Completed" : "Mark Completed"}
                   </button>
@@ -166,9 +166,9 @@ export default function SchedulePage() {
                   onClick={() => setWeekday(i)}
                   className="flex-1 cursor-pointer rounded-[11px] py-2.5 text-center text-[11px] font-extrabold"
                   style={{
-                    background: active ? "rgba(212,175,55,0.12)" : "#1c1c1c",
+                    background: active ? "rgb(var(--color-gold) / 0.12)" : "rgb(var(--color-inputbg))",
                     border: `1px solid ${active ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.08)"}`,
-                    color: active ? "#D4AF37" : "#a3a39c",
+                    color: active ? "rgb(var(--color-gold))" : "rgb(var(--color-secondary))",
                   }}
                 >
                   {w}
@@ -180,7 +180,7 @@ export default function SchedulePage() {
             <button onClick={openAll} className="flex-1 rounded-[10px] border border-gold/40 py-2.5 text-xs font-bold text-gold">
               Open All
             </button>
-            <button onClick={blockAll} className="flex-1 rounded-[10px] border border-white/15 py-2.5 text-xs font-bold text-secondary">
+            <button onClick={blockAll} className="flex-1 rounded-[10px] border border-line/15 py-2.5 text-xs font-bold text-secondary">
               Block All
             </button>
           </div>
@@ -193,8 +193,8 @@ export default function SchedulePage() {
                   onClick={() => toggleSlot(i)}
                   className="cursor-pointer rounded-[10px] py-3 text-center text-[13px] font-bold"
                   style={{
-                    background: isBlocked ? "#161616" : "rgba(95,206,137,0.12)",
-                    color: isBlocked ? "#6b6b66" : "#5fce89",
+                    background: isBlocked ? "rgb(var(--color-cardalt))" : "rgb(var(--color-success) / 0.12)",
+                    color: isBlocked ? "rgb(var(--color-faint))" : "rgb(var(--color-success))",
                     border: `1px solid ${isBlocked ? "rgba(255,255,255,0.08)" : "rgba(95,206,137,0.3)"}`,
                     opacity: loadingAvail ? 0.5 : 1,
                   }}

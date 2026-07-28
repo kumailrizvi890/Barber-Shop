@@ -107,21 +107,21 @@ export default function BarberProfilePage() {
         <div className="mb-4 rounded-2xl border border-gold/25 bg-card p-4">
           <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">NAME</div>
           <input
-            className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            className="mb-3 w-full box-border rounded-xl border border-line/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
             placeholder="Your name"
           />
           <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">LOCATION</div>
           <input
-            className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            className="mb-3 w-full box-border rounded-xl border border-line/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
             value={editLocation}
             onChange={(e) => setEditLocation(e.target.value)}
             placeholder="Shop location / address"
           />
           <div className="mb-2 text-[11px] font-bold tracking-wide text-muted">DESCRIPTION</div>
           <textarea
-            className="mb-4 w-full box-border rounded-xl border border-white/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
+            className="mb-4 w-full box-border rounded-xl border border-line/10 bg-inputbg px-3.5 py-[11px] text-sm outline-none"
             rows={3}
             value={editBio}
             onChange={(e) => setEditBio(e.target.value)}
@@ -136,10 +136,10 @@ export default function BarberProfilePage() {
         </div>
       ) : (
         <>
-          <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-4">
+          <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-line/[0.07] bg-card p-4">
             <div
               className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl border border-gold/40 font-headline text-base text-gold"
-              style={{ background: "linear-gradient(135deg,#2a2a2a,#151515)" }}
+              style={{ background: "linear-gradient(135deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}
             >
               {profile?.initials}
             </div>
@@ -147,23 +147,23 @@ export default function BarberProfilePage() {
               <div className="text-[15px] font-extrabold">{profile?.name}</div>
               <div className="text-[11.5px] text-muted">{profile?.location}</div>
             </div>
-            <div onClick={startEdit} className="cursor-pointer rounded-lg border border-white/10 px-2.5 py-[7px] text-[11.5px] font-bold text-gold">
+            <div onClick={startEdit} className="cursor-pointer rounded-lg border border-line/10 px-2.5 py-[7px] text-[11.5px] font-bold text-gold">
               Edit
             </div>
           </div>
 
           {profile?.bio && (
-            <div className="mb-4 rounded-2xl border border-white/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
+            <div className="mb-4 rounded-2xl border border-line/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
           )}
         </>
       )}
 
-      <div className="mb-5 flex justify-between gap-2 rounded-2xl border border-white/[0.07] bg-card p-[14px_4px]">
+      <div className="mb-5 flex justify-between gap-2 rounded-2xl border border-line/[0.07] bg-card p-[14px_4px]">
         <div className="flex-1 text-center">
           <div className="font-headline text-base text-gold">{posts.length}</div>
           <div className="text-[10px] text-muted">Posts</div>
         </div>
-        <div className="flex-1 border-x border-white/[0.07] text-center">
+        <div className="flex-1 border-x border-line/[0.07] text-center">
           <div className="font-headline text-base text-gold">{completedCount}</div>
           <div className="text-[10px] text-muted">Cuts Done</div>
         </div>
@@ -176,7 +176,7 @@ export default function BarberProfilePage() {
       <div className="mb-2.5 font-headline text-sm tracking-wide">SERVICES & RATES</div>
       <div className="mb-2.5 flex flex-col gap-1.5">
         {services.map((s) => (
-          <div key={s.id} className="flex items-center gap-2 rounded-[11px] border border-white/[0.07] bg-card p-[10px_14px]">
+          <div key={s.id} className="flex items-center gap-2 rounded-[11px] border border-line/[0.07] bg-card p-[10px_14px]">
             <div className="flex-1 text-[13px] font-bold">{s.name}</div>
             <div className="text-[13px] font-extrabold text-gold">${s.price}</div>
             <div onClick={() => removeService(s.id)} className="cursor-pointer px-0.5 text-[13px] text-muted">✕</div>
@@ -185,24 +185,24 @@ export default function BarberProfilePage() {
       </div>
       <div className="mb-[22px] flex gap-2">
         <input
-          className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-white/10 bg-card px-3 py-[11px] text-[13px] outline-none"
+          className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-line/10 bg-card px-3 py-[11px] text-[13px] outline-none"
           value={svcName}
           onChange={(e) => setSvcName(e.target.value)}
           placeholder="Service name"
         />
         <input
-          className="w-14 box-border rounded-[10px] border border-white/10 bg-card px-2 py-[11px] text-[13px] outline-none"
+          className="w-14 box-border rounded-[10px] border border-line/10 bg-card px-2 py-[11px] text-[13px] outline-none"
           value={svcPrice}
           onChange={(e) => setSvcPrice(e.target.value.replace(/[^0-9.]/g, ""))}
           placeholder="$"
         />
-        <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-gold text-lg font-extrabold text-bg">+</div>
+        <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-goldsolid text-lg font-extrabold text-bg">+</div>
       </div>
 
       <div className="mb-2.5 flex items-center justify-between">
         <div className="font-headline text-sm tracking-wide">MY WORK</div>
         <div className="flex gap-2">
-          <div onClick={() => photoInput.current?.click()} className="cursor-pointer rounded-lg bg-gold px-2.5 py-[7px] text-[11.5px] font-extrabold text-bg">
+          <div onClick={() => photoInput.current?.click()} className="cursor-pointer rounded-lg bg-goldsolid px-2.5 py-[7px] text-[11.5px] font-extrabold text-bg">
             {uploading ? "Uploading…" : "+ Photo"}
           </div>
           <div onClick={() => videoInput.current?.click()} className="cursor-pointer rounded-lg border border-gold/40 px-2.5 py-[7px] text-[11.5px] font-extrabold text-gold">

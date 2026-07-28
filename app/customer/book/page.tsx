@@ -166,7 +166,7 @@ export default function BookPage() {
             <div
               key={b.id}
               onClick={() => pickBarber(b)}
-              className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-[12px_14px]"
+              className="flex cursor-pointer items-center gap-3.5 rounded-2xl border border-line/[0.07] bg-card p-[12px_14px]"
             >
               <BarberAvatar initials={b.initials} size={44} rounded={11} />
               <div className="flex-1">
@@ -194,7 +194,7 @@ export default function BookPage() {
 
       {step === 2 && selectedBarber && (
         <div>
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-card p-[10px_12px]">
+          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-line/[0.07] bg-card p-[10px_12px]">
             <BarberAvatar initials={selectedBarber.initials} size={34} rounded={9} />
             <div className="flex-1 text-[13px] font-bold">{selectedBarber.name}</div>
             <div onClick={() => setStep(1)} className="cursor-pointer text-[11px] text-gold">Change</div>
@@ -210,11 +210,11 @@ export default function BookPage() {
                   onClick={() => setServiceId(s.id)}
                   className="flex cursor-pointer items-center justify-between rounded-[11px] p-[11px_14px]"
                   style={{
-                    background: active ? "rgba(212,175,55,0.1)" : "#1c1c1c",
+                    background: active ? "rgb(var(--color-gold) / 0.1)" : "rgb(var(--color-inputbg))",
                     border: `1px solid ${active ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
-                  <div className="text-[13px] font-bold" style={{ color: active ? "#D4AF37" : "#f5f5f0" }}>{s.name}</div>
+                  <div className="text-[13px] font-bold" style={{ color: active ? "rgb(var(--color-gold))" : "rgb(var(--color-primary))" }}>{s.name}</div>
                   <div className="text-[13px] font-extrabold text-gold">${s.price}</div>
                 </div>
               );
@@ -234,14 +234,14 @@ export default function BookPage() {
                   }}
                   className="w-[52px] shrink-0 cursor-pointer rounded-xl py-2.5 text-center"
                   style={{
-                    background: active ? "rgba(212,175,55,0.12)" : "#1c1c1c",
+                    background: active ? "rgb(var(--color-gold) / 0.12)" : "rgb(var(--color-inputbg))",
                     border: `1px solid ${active ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
-                  <div className="text-[10px] font-semibold tracking-wide" style={{ color: active ? "#D4AF37" : "#8f8f89" }}>
+                  <div className="text-[10px] font-semibold tracking-wide" style={{ color: active ? "rgb(var(--color-gold))" : "rgb(var(--color-muted))" }}>
                     {d.label.split(" ")[0].toUpperCase()}
                   </div>
-                  <div className="mt-0.5 text-base font-extrabold" style={{ color: active ? "#D4AF37" : "#f5f5f0" }}>
+                  <div className="mt-0.5 text-base font-extrabold" style={{ color: active ? "rgb(var(--color-gold))" : "rgb(var(--color-primary))" }}>
                     {d.label.split(" ")[1]}
                   </div>
                 </div>
@@ -260,9 +260,9 @@ export default function BookPage() {
                   onClick={() => !unavailable && setTime(label)}
                   className="rounded-[10px] py-3 text-center text-[13px] font-bold"
                   style={{
-                    background: active ? "#D4AF37" : unavailable ? "#161616" : "#1c1c1c",
-                    color: active ? "#0a0a0a" : unavailable ? "#4a4a46" : "#f5f5f0",
-                    border: `1px solid ${active ? "#D4AF37" : "rgba(255,255,255,0.08)"}`,
+                    background: active ? "rgb(var(--color-goldsolid))" : unavailable ? "rgb(var(--color-cardalt))" : "rgb(var(--color-inputbg))",
+                    color: active ? "rgb(var(--color-bg))" : unavailable ? "rgb(var(--color-faint))" : "rgb(var(--color-primary))",
+                    border: `1px solid ${active ? "rgb(var(--color-goldsolid))" : "rgb(var(--color-line) / 0.08)"}`,
                     cursor: unavailable ? "not-allowed" : "pointer",
                     opacity: unavailable ? 0.5 : 1,
                   }}
@@ -284,10 +284,10 @@ export default function BookPage() {
           <div className="my-2.5 mb-[22px] flex justify-center">
             <div
               className="flex h-[72px] w-[72px] animate-checkPop items-center justify-center rounded-full"
-              style={{ background: "radial-gradient(circle,#D4AF37,#a8842a)" }}
+              style={{ background: "radial-gradient(circle, rgb(var(--color-goldsolid)), rgb(var(--color-golddark)))" }}
             >
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M5 13l4 4L19 7" stroke="rgb(var(--color-bg))" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
@@ -301,9 +301,9 @@ export default function BookPage() {
               ["Date", dates[dateIdx].label],
               ["Time", time ?? ""],
             ].map(([label, value], i) => (
-              <div key={label} className={"flex justify-between py-[9px]" + (i < 3 ? " border-b border-white/[0.07]" : "")}>
+              <div key={label} className={"flex justify-between py-[9px]" + (i < 3 ? " border-b border-line/[0.07]" : "")}>
                 <span className="text-[12.5px] text-muted">{label}</span>
-                <span className="text-[13px] font-bold" style={label === "Time" ? { color: "#D4AF37" } : undefined}>
+                <span className="text-[13px] font-bold" style={label === "Time" ? { color: "rgb(var(--color-gold))" } : undefined}>
                   {value}
                 </span>
               </div>
@@ -324,10 +324,10 @@ export default function BookPage() {
           <div className="my-2.5 mb-[22px] flex justify-center">
             <div
               className="flex h-[72px] w-[72px] animate-checkPop items-center justify-center rounded-full"
-              style={{ background: "radial-gradient(circle,#D4AF37,#a8842a)" }}
+              style={{ background: "radial-gradient(circle, rgb(var(--color-goldsolid)), rgb(var(--color-golddark)))" }}
             >
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M5 13l4 4L19 7" stroke="rgb(var(--color-bg))" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
@@ -348,20 +348,20 @@ export default function BookPage() {
               </div>
 
               <input
-                className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                className="mb-3 w-full box-border rounded-xl border border-line/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-faint"
                 value={gName}
                 onChange={(e) => setGName(e.target.value)}
                 placeholder="Your name"
               />
               <input
-                className="mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                className="mb-3 w-full box-border rounded-xl border border-line/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-faint"
                 value={gPhone}
                 onChange={(e) => setGPhone(e.target.value)}
                 placeholder="Phone number"
                 type="tel"
               />
               <input
-                className="mb-[18px] w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]"
+                className="mb-[18px] w-full box-border rounded-xl border border-line/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-faint"
                 value={gPassword}
                 onChange={(e) => setGPassword(e.target.value)}
                 placeholder="Password"

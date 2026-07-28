@@ -61,10 +61,10 @@ export default function RequestsPage() {
                 <div className="text-[12.5px] font-bold text-gold">{p.time}</div>
               </div>
               <div className="flex gap-2.5">
-                <button onClick={() => approve(p)} className="flex-1 rounded-[10px] bg-gold py-[11px] text-[13px] font-extrabold text-bg">
+                <button onClick={() => approve(p)} className="flex-1 rounded-[10px] bg-goldsolid py-[11px] text-[13px] font-extrabold text-bg">
                   Approve
                 </button>
-                <button onClick={() => decline(p)} className="flex-1 rounded-[10px] border border-white/15 py-[11px] text-[13px] font-bold text-secondary">
+                <button onClick={() => decline(p)} className="flex-1 rounded-[10px] border border-line/15 py-[11px] text-[13px] font-bold text-secondary">
                   Decline
                 </button>
               </div>

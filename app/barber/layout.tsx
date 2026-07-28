@@ -43,7 +43,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         <Wordmark size={17} sub="BARBER" />
         <div
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 text-xs font-bold text-gold"
-          style={{ background: "linear-gradient(135deg,#2a2a2a,#151515)" }}
+          style={{ background: "linear-gradient(135deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}
         >
           {profile?.initials}
         </div>

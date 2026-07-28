@@ -27,8 +27,8 @@ const FEATURES = [
     sub: "Live chair availability, no calls",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="5" width="18" height="16" rx="2" stroke="#D4AF37" strokeWidth="2" />
-        <path d="M3 10h18M8 3v4M16 3v4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" />
+        <rect x="3" y="5" width="18" height="16" rx="2" stroke="rgb(var(--color-gold))" strokeWidth="2" />
+        <path d="M3 10h18M8 3v4M16 3v4" stroke="rgb(var(--color-gold))" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -37,7 +37,7 @@ const FEATURES = [
     sub: "Pick your chair by rating & style",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2l2.6 6.5L21 9l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.6 3 9l6.4-.5L12 2z" stroke="#D4AF37" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M12 2l2.6 6.5L21 9l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.6 3 9l6.4-.5L12 2z" stroke="rgb(var(--color-gold))" strokeWidth="2" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -46,7 +46,7 @@ const FEATURES = [
     sub: "Points on every cut, free cuts on us",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M20 6L9 17l-5-5" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 6L9 17l-5-5" stroke="rgb(var(--color-gold))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -157,34 +157,40 @@ function AuthCard() {
   }
 
   const inputClass =
-    "mb-3 w-full box-border rounded-xl border border-white/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-[#5a5a55]";
+    "mb-3 w-full box-border rounded-xl border border-line/10 bg-inputbg px-4 py-[14px] text-sm text-primary outline-none placeholder:text-faint";
 
   return (
     <div className="w-full rounded-[24px] border border-gold/20 bg-cardalt/90 p-6 shadow-2xl backdrop-blur-xl sm:p-7">
       <button
         onClick={bookNow}
-        className="mb-4 flex w-full animate-pulseGold items-center justify-center gap-2 rounded-xl bg-gold py-[18px] text-[16px] font-extrabold text-bg transition-transform hover:scale-[1.015]"
+        className="mb-4 flex w-full animate-pulseGold items-center justify-center gap-2 rounded-xl bg-goldsolid py-[18px] text-[16px] font-extrabold text-bg transition-transform hover:scale-[1.015]"
       >
         Book Now <span aria-hidden>→</span>
       </button>
       <div className="mb-4 flex items-center gap-3 text-[10.5px] font-bold tracking-wide text-faint">
-        <div className="h-px flex-1 bg-white/[0.08]" />
+        <div className="h-px flex-1 bg-line/[0.08]" />
         OR LOG IN / SIGN UP
-        <div className="h-px flex-1 bg-white/[0.08]" />
+        <div className="h-px flex-1 bg-line/[0.08]" />
       </div>
 
-      <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-inputbg p-1">
+      <div className="mb-4 flex rounded-xl border border-line/[0.07] bg-inputbg p-1">
         <button
           onClick={() => setMode("login")}
           className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
-          style={{ background: mode === "login" ? "#D4AF37" : "transparent", color: mode === "login" ? "#0a0a0a" : "#8f8f89" }}
+          style={{
+            background: mode === "login" ? "rgb(var(--color-goldsolid))" : "transparent",
+            color: mode === "login" ? "rgb(var(--color-bg))" : "rgb(var(--color-muted))",
+          }}
         >
           Log In
         </button>
         <button
           onClick={() => setMode("signup")}
           className="flex-1 rounded-[9px] py-[10px] text-[12.5px] font-extrabold"
-          style={{ background: mode === "signup" ? "#D4AF37" : "transparent", color: mode === "signup" ? "#0a0a0a" : "#8f8f89" }}
+          style={{
+            background: mode === "signup" ? "rgb(var(--color-goldsolid))" : "transparent",
+            color: mode === "signup" ? "rgb(var(--color-bg))" : "rgb(var(--color-muted))",
+          }}
         >
           Sign Up
         </button>
@@ -198,9 +204,9 @@ function AuthCard() {
             onClick={() => setRole(r)}
             className="flex-1 rounded-xl py-[13px] text-[13px] font-extrabold capitalize"
             style={{
-              background: role === r ? "rgba(212,175,55,0.12)" : "transparent",
-              border: `1px solid ${role === r ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.1)"}`,
-              color: role === r ? "#D4AF37" : "#a3a39c",
+              background: role === r ? "rgb(var(--color-gold) / 0.12)" : "transparent",
+              border: `1px solid ${role === r ? "rgb(var(--color-gold) / 0.5)" : "rgb(var(--color-line) / 0.1)"}`,
+              color: role === r ? "rgb(var(--color-gold))" : "rgb(var(--color-secondary))",
             }}
           >
             {r}
@@ -227,7 +233,7 @@ function AuthCard() {
           <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">SERVICES & RATES</div>
           <div className="mb-2.5 flex flex-col gap-1.5">
             {services.map((s) => (
-              <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-white/[0.08] bg-inputbg px-3 py-2.5">
+              <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-line/[0.08] bg-inputbg px-3 py-2.5">
                 <div className="flex-1 text-[13px] font-bold">{s.name}</div>
                 <div className="text-[13px] font-bold text-gold">${s.price}</div>
                 <div onClick={() => removeService(s.id)} className="cursor-pointer px-0.5 text-[13px] text-muted">✕</div>
@@ -236,18 +242,18 @@ function AuthCard() {
           </div>
           <div className="mb-4 flex gap-2">
             <input
-              className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-white/10 bg-inputbg px-3 py-[11px] text-[13px] outline-none"
+              className="min-w-0 flex-[1.4] box-border rounded-[10px] border border-line/10 bg-inputbg px-3 py-[11px] text-[13px] outline-none"
               value={svcName}
               onChange={(e) => setSvcName(e.target.value)}
               placeholder="Service (e.g. Skin Fade)"
             />
             <input
-              className="w-14 box-border rounded-[10px] border border-white/10 bg-inputbg px-2 py-[11px] text-[13px] outline-none"
+              className="w-14 box-border rounded-[10px] border border-line/10 bg-inputbg px-2 py-[11px] text-[13px] outline-none"
               value={svcPrice}
               onChange={(e) => setSvcPrice(e.target.value.replace(/[^0-9.]/g, ""))}
               placeholder="$"
             />
-            <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-gold text-lg font-extrabold text-bg">+</div>
+            <div onClick={addService} className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-goldsolid text-lg font-extrabold text-bg">+</div>
           </div>
         </>
       )}
@@ -318,7 +324,7 @@ export default function AuthPage() {
               { big: "10K+", small: "Cuts Done" },
               { big: "Local", small: "Est. Lynnwood" },
             ].map((s) => (
-              <div key={s.small} className="rounded-[14px] border border-white/[0.07] bg-card px-2 py-4 text-center">
+              <div key={s.small} className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
                 <div className="font-headline text-[20px] text-gold">{s.big}</div>
                 <div className="mt-1 text-[10px] text-muted">{s.small}</div>
               </div>
@@ -330,7 +336,7 @@ export default function AuthPage() {
             <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
               {FEATURES.map((f) => (
-                <div key={f.title} className="flex items-center gap-3 rounded-[14px] border border-white/[0.07] bg-card px-3.5 py-[13px]">
+                <div key={f.title} className="flex items-center gap-3 rounded-[14px] border border-line/[0.07] bg-card px-3.5 py-[13px]">
                   <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
                   <div>
                     <div className="text-[13px] font-bold">{f.title}</div>
@@ -348,7 +354,7 @@ export default function AuthPage() {
             href={MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative mt-4 block h-[150px] overflow-hidden rounded-2xl border border-white/[0.07] transition-colors hover:border-gold/25"
+            className="group relative mt-4 block h-[150px] overflow-hidden rounded-2xl border border-line/[0.07] transition-colors hover:border-gold/25"
           >
             <iframe
               src={`https://www.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&output=embed`}
@@ -367,7 +373,7 @@ export default function AuthPage() {
         </div>
       </main>
 
-      <footer className="relative z-10 border-t border-white/[0.06] py-6 text-center text-[10.5px] text-[#5a5a55]">
+      <footer className="relative z-10 border-t border-line/[0.06] py-6 text-center text-[10.5px] text-faint">
         FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
       </footer>
     </div>

@@ -59,7 +59,7 @@ export default function BarberProfileViewPage() {
         ← Back
       </div>
 
-      <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-card p-4">
+      <div className="mb-3 flex items-center gap-3.5 rounded-2xl border border-line/[0.07] bg-card p-4">
         <BarberAvatar initials={profile.initials} size={60} rounded={14} />
         <div className="min-w-0 flex-1">
           <div className="text-[17px] font-extrabold">{profile.name}</div>
@@ -72,7 +72,7 @@ export default function BarberProfileViewPage() {
       </div>
 
       {profile.bio && (
-        <div className="mb-5 rounded-2xl border border-white/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
+        <div className="mb-5 rounded-2xl border border-line/[0.07] bg-card p-3.5 text-[12.5px] leading-snug text-secondary">{profile.bio}</div>
       )}
 
       <div className="mb-5">
@@ -82,7 +82,7 @@ export default function BarberProfileViewPage() {
       <div className="mb-2 text-[11.5px] font-bold tracking-wide text-muted">SERVICES & RATES</div>
       <div className="mb-5 flex flex-col gap-1.5">
         {services.map((s) => (
-          <div key={s.id} className="flex items-center justify-between rounded-[11px] border border-white/[0.07] bg-card p-[10px_14px]">
+          <div key={s.id} className="flex items-center justify-between rounded-[11px] border border-line/[0.07] bg-card p-[10px_14px]">
             <div className="text-[13px] font-bold">{s.name}</div>
             <div className="text-[13px] font-extrabold text-gold">${s.price}</div>
           </div>
