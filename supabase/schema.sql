@@ -6,7 +6,7 @@ create extension if not exists "pgcrypto";
 -- ── profiles ─────────────────────────────────────────────────────────────
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  role text not null check (role in ('customer','barber')),
+  role text not null check (role in ('customer','barber','owner')),
   name text not null,
   email text,
   phone text,
@@ -15,6 +15,10 @@ create table if not exists profiles (
   initials text not null default '',
   rating numeric not null default 5.0,
   cuts_done integer not null default 0,
+  -- Barber signups start 'pending' until the owner approves them (only then
+  -- do they show up in the customer-facing crew). Customers/owners are
+  -- created 'approved' since the workflow doesn't apply to them.
+  status text not null default 'approved' check (status in ('pending','approved','rejected')),
   created_at timestamptz not null default now()
 );
 
@@ -25,8 +29,36 @@ create policy "users can insert their own profile"
   on profiles for insert to authenticated with check (auth.uid() = id);
 create policy "users can update their own profile"
   on profiles for update to authenticated using (auth.uid() = id);
+create policy "owners can update any profile"
+  on profiles for update to authenticated
+  using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'owner'))
+  with check (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'owner'));
 create policy "public can read barber profiles"
-  on profiles for select to anon using (role = 'barber');
+  on profiles for select to anon using (role = 'barber' and status = 'approved');
+
+-- The self-update policy above only checks `auth.uid() = id`, not which
+-- columns change — without this trigger, any logged-in user could set their
+-- own `role`/`status` and self-promote. auth.uid() is null outside of the
+-- PostgREST/app request context (SQL editor, migrations, dashboard) — that's
+-- already trusted access, so it's left unrestricted (bootstraps the first
+-- owner account).
+create or replace function prevent_self_role_escalation() returns trigger
+language plpgsql as $$
+begin
+  if (new.role is distinct from old.role or new.status is distinct from old.status) then
+    if auth.uid() is not null and not exists (
+      select 1 from profiles p where p.id = auth.uid() and p.role = 'owner'
+    ) then
+      raise exception 'Only an owner can change role or status.';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger profiles_guard_role_status
+  before update on profiles
+  for each row execute function prevent_self_role_escalation();
 
 -- ── barber_services ──────────────────────────────────────────────────────
 create table if not exists barber_services (
@@ -89,6 +121,9 @@ create policy "customers can create bookings"
 create policy "customers and barbers can update relevant bookings"
   on bookings for update to authenticated
   using (auth.uid() = customer_id or auth.uid() = barber_id);
+create policy "owners can read all bookings"
+  on bookings for select to authenticated
+  using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'owner'));
 
 -- ── posts (My Work grid) ────────────────────────────────────────────────
 create table if not exists posts (
@@ -222,3 +257,33 @@ create policy "barbers upload their own post media"
 create policy "barbers delete their own post media"
   on storage.objects for delete to authenticated
   using (bucket_id = 'posts' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ── site_stats: public live "bookings made" counter ─────────────────────
+-- Individual bookings stay locked down by RLS (customers/barbers only see
+-- their own). This table exposes just a running total so the landing page
+-- can show a live counter without leaking booking details to anon visitors.
+create table if not exists site_stats (
+  key text primary key,
+  value bigint not null default 0
+);
+
+alter table site_stats enable row level security;
+create policy "anyone can read site stats"
+  on site_stats for select to anon, authenticated using (true);
+
+insert into site_stats (key, value) values ('total_bookings', 0)
+on conflict (key) do nothing;
+
+create or replace function bump_total_bookings() returns trigger
+language plpgsql security definer as $$
+begin
+  update site_stats set value = value + 1 where key = 'total_bookings';
+  return new;
+end;
+$$;
+
+create trigger bookings_bump_total_bookings
+  after insert on bookings
+  for each row execute function bump_total_bookings();
+
+alter publication supabase_realtime add table site_stats;

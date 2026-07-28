@@ -1,6 +1,7 @@
-export type Role = "customer" | "barber";
+export type Role = "customer" | "barber" | "owner";
 export type BookingStatus = "pending" | "approved" | "declined" | "completed";
 export type PostType = "image" | "video";
+export type ProfileStatus = "pending" | "approved" | "rejected";
 
 export interface Profile {
   id: string;
@@ -13,6 +14,7 @@ export interface Profile {
   initials: string;
   rating: number;
   cuts_done: number;
+  status: ProfileStatus;
   created_at: string;
 }
 

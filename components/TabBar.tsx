@@ -80,9 +80,36 @@ const BARBER_TABS = [
   },
 ];
 
-export function TabBar({ role, badge }: { role: "customer" | "barber"; badge?: boolean }) {
+const OWNER_TABS = [
+  {
+    href: "/owner/dashboard",
+    label: "Dashboard",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="3" width="8" height="10" rx="1.5" stroke="currentColor" strokeWidth="2" />
+        <rect x="13" y="3" width="8" height="6" rx="1.5" stroke="currentColor" strokeWidth="2" />
+        <rect x="13" y="11" width="8" height="10" rx="1.5" stroke="currentColor" strokeWidth="2" />
+        <rect x="3" y="15" width="8" height="6" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    ),
+  },
+  {
+    href: "/owner/crew",
+    label: "Crew",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
+        <path d="M2.5 20c1.2-3.5 3.7-5.5 6.5-5.5s5.3 2 6.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="17.5" cy="7.5" r="2.5" stroke="currentColor" strokeWidth="2" />
+        <path d="M15.5 14.3c2.3.4 4 1.9 5 4.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+];
+
+export function TabBar({ role, badge }: { role: "customer" | "barber" | "owner"; badge?: boolean }) {
   const pathname = usePathname();
-  const tabs = role === "customer" ? CUSTOMER_TABS : BARBER_TABS;
+  const tabs = role === "customer" ? CUSTOMER_TABS : role === "barber" ? BARBER_TABS : OWNER_TABS;
   return (
     <div className="flex shrink-0 border-t border-white/[0.08] bg-[#0d0d0d] px-2.5 pb-1 pt-2">
       {tabs.map((t) => {
@@ -98,7 +125,7 @@ export function TabBar({ role, badge }: { role: "customer" | "barber"; badge?: b
               <Icon>{t.icon}</Icon>
             </div>
             <div className="mt-1 text-[10px] font-bold">{t.label}</div>
-            {badge && t.label === "Requests" && (
+            {badge && (t.label === "Requests" || t.label === "Crew") && (
               <div className="absolute right-[calc(50%-22px)] top-0.5 h-2 w-2 rounded-full bg-gold" />
             )}
           </Link>

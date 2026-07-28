@@ -14,7 +14,9 @@ function Shell({ children }: { children: React.ReactNode }) {
   const [hasPending, setHasPending] = useState(false);
 
   useEffect(() => {
-    if (!loading && (!profile || profile.role !== "barber")) router.push("/auth");
+    if (loading) return;
+    if (!profile || profile.role !== "barber") router.push("/auth");
+    else if (profile.status !== "approved") router.push("/pending");
   }, [loading, profile, router]);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       .then(({ count }) => setHasPending(!!count && count > 0));
   }, [profile, supabase]);
 
-  if (loading || !profile || profile.role !== "barber") {
+  if (loading || !profile || profile.role !== "barber" || profile.status !== "approved") {
     return (
       <div className="app-shell items-center justify-center">
         <div className="text-sm text-muted">Loading…</div>

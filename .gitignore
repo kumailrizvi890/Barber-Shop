@@ -7,3 +7,4 @@ npm-debug.log*
 .claude/
 tsconfig.tsbuildinfo
 dev-server.sh
+PROJECT-HANDOFF.md

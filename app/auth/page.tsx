@@ -9,8 +9,15 @@ import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
 import { Hero3DGate } from "@/components/Hero3DGate";
 import { GoldButton } from "@/components/UI";
+import { LiveBookingCounter } from "@/components/LiveBookingCounter";
 
 type DraftService = { id: number; name: string; price: number };
+
+// No fixed street address yet (pre-launch) — a name+city search still drops
+// a correct pin and offers directions. Swap for a `daddr=<street address>`
+// query once the shop has a confirmed location.
+const MAPS_QUERY = "Fade Kings Barber Shop, Lynnwood, WA";
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAPS_QUERY)}`;
 
 const TICKER_ITEMS = ["FADES", "TAPERS", "BEARD SCULPT", "KIDS CUTS", "HOT TOWEL SHAVES", "DESIGNS"];
 
@@ -91,6 +98,10 @@ function AuthCard() {
 
   async function continueAuth() {
     if (cannotContinue) return;
+    if (isSignup && password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -113,6 +124,8 @@ function AuthCard() {
           location: role === "barber" ? location.trim() : null,
           bio: role === "barber" ? bio.trim() : null,
           initials: initialsFor(name.trim()),
+          // Barber signups need owner approval before they're bookable; everyone else is live immediately.
+          status: role === "barber" ? "pending" : "approved",
         });
         if (profileErr) throw profileErr;
 
@@ -124,15 +137,17 @@ function AuthCard() {
         }
         await supabase.from("rewards").insert({ user_id: userId, points: 0 });
 
-        router.push(role === "barber" ? "/barber/requests" : "/customer/home");
+        router.push(role === "barber" ? "/pending" : "/customer/home");
       } else {
         const { data, error: signInErr } = isBarberRole
           ? await supabase.auth.signInWithPassword({ email, password })
           : await supabase.auth.signInWithPassword({ phone: e164Phone!, password });
         if (signInErr) throw signInErr;
         const userId = data.user?.id;
-        const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).single();
-        router.push(profile?.role === "barber" ? "/barber/requests" : "/customer/home");
+        const { data: profile } = await supabase.from("profiles").select("role, status").eq("id", userId).single();
+        if (profile?.role === "owner") router.push("/owner/dashboard");
+        else if (profile?.role === "barber") router.push(profile.status === "approved" ? "/barber/requests" : "/pending");
+        else router.push("/customer/home");
       }
     } catch (e: any) {
       setError(e.message ?? "Something went wrong.");
@@ -242,7 +257,8 @@ function AuthCard() {
       ) : (
         <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" type="tel" />
       )}
-      <input className={inputClass + " mb-[18px]"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
+      <input className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
+      <div className="mb-[18px] text-[11px] text-faint">{isSignup ? "At least 8 characters" : " "}</div>
 
       {error && <div className="mb-3 text-[12.5px] text-error">{error}</div>}
 
@@ -296,7 +312,7 @@ export default function AuthPage() {
             <Marquee items={TICKER_ITEMS} />
           </div>
 
-          <div className="mt-8 grid grid-cols-3 gap-3 sm:max-w-md">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
             {[
               { big: "4.6★", small: "Avg Rating" },
               { big: "10K+", small: "Cuts Done" },
@@ -307,6 +323,7 @@ export default function AuthPage() {
                 <div className="mt-1 text-[10px] text-muted">{s.small}</div>
               </div>
             ))}
+            <LiveBookingCounter />
           </div>
 
           <div className="mt-10">
@@ -327,6 +344,26 @@ export default function AuthPage() {
 
         <div className="lg:sticky lg:top-16">
           <AuthCard />
+          <a
+            href={MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative mt-4 block h-[150px] overflow-hidden rounded-2xl border border-white/[0.07] transition-colors hover:border-gold/25"
+          >
+            <iframe
+              src={`https://www.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&output=embed`}
+              className="pointer-events-none h-full w-full grayscale-[0.3] brightness-[0.85] contrast-[1.1]"
+              loading="lazy"
+              title="Fade Kings Barber Shop location"
+            />
+            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2.5 bg-gradient-to-t from-black/90 to-transparent px-4 pb-3 pt-8">
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-bold text-white">Fade Kings Barber Shop</div>
+                <div className="mt-0.5 text-[11px] text-white/70">Lynnwood, WA — tap for directions</div>
+              </div>
+              <div className="shrink-0 text-gold">→</div>
+            </div>
+          </a>
         </div>
       </main>
 

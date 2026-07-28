@@ -63,6 +63,21 @@ git push -u origin main
 
 (Create the empty repo on GitHub first, or use `gh repo create` if you have the GitHub CLI.)
 
+## 5. Owner dashboard setup (existing/live project)
+
+The owner dashboard, barber-approval workflow, and live booking counter need a schema update on top of what's already deployed. Since your Supabase project is already live, **don't re-run `schema.sql`** (it's not written to be safely re-run) — instead:
+
+1. Open **SQL Editor** in your Supabase project → paste the contents of [`supabase/migrations/002_owner_dashboard.sql`](./supabase/migrations/002_owner_dashboard.sql) → Run. This adds the `owner` role, a `status` (pending/approved/rejected) column on `profiles` for barber approval, and a public `site_stats` counter that powers the live "Online Bookings" number.
+   - Existing barbers are unaffected — the new `status` column defaults to `'approved'` for every existing row, so no one currently live disappears from The Crew.
+   - If the last line (`alter publication supabase_realtime add table site_stats;`) errors, it just means Realtime is already on for that table — ignore it. If it fails for another reason, enable Realtime for `site_stats` manually in **Database → Replication**.
+2. Promote your own account to owner. Sign up on the live site first (any role — Customer is simplest, just phone + password), then find your user's UUID in **Authentication → Users**, and run in SQL Editor:
+   ```sql
+   update profiles set role = 'owner', status = 'approved' where id = '<paste-your-user-uuid>';
+   ```
+3. Log in at `/auth` with that account — you'll land on `/owner/dashboard`.
+
+New barber signups now land on a "Application under review" screen (`/pending`) until you approve them from `/owner/crew`. Approved barbers immediately show up in The Crew and can take bookings; rejected ones see a decline message and stay out of the crew list.
+
 ## What's implemented
 
 - **Auth**: barbers use email/password; customers use phone/password. Role picker on signup; barber signup also collects location/bio and a repeatable services-&-rates builder.
@@ -71,6 +86,7 @@ git push -u origin main
 - **Barber app**: Requests (approve/decline), Schedule (Bookings sub-tab with reminder/complete actions; Availability sub-tab with per-weekday recurring slot blocking), Profile (services CRUD, My Work photo/video uploads to Supabase Storage).
 - **Notifications**: bell + slide-down panel, generated on request/approve/decline/reminder/completion, unread badge, mark-as-read.
 - **Rewards**: 10 points per $1, credited on rating; 5000-point redemption.
+- **Owner dashboard** (`/owner`): approve/reject barber applications, browse the crew with per-barber stats (revenue YTD/month/all-time, bookings, cuts completed), shop-wide revenue and booking totals, and a live "Online Bookings" counter (also shown to anonymous visitors on the `/auth` landing page) via a Supabase Realtime-backed public counter.
 - **Data**: everything lives in Postgres via `supabase/schema.sql` — no mock/in-memory state.
 
 ## Notes & things you may want to adjust

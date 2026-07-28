@@ -1,6 +1,95 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Booking, Post, PostComment, Profile, RewardRedemption } from "@/lib/types";
 
+export async function approveBarber(supabase: SupabaseClient, barberId: string) {
+  const { error } = await supabase.from("profiles").update({ status: "approved" }).eq("id", barberId);
+  if (error) throw error;
+  await notify(supabase, barberId, "You're approved! You're now live in The Crew and can start taking bookings.", "🎉");
+}
+
+export async function rejectBarber(supabase: SupabaseClient, barberId: string) {
+  const { error } = await supabase.from("profiles").update({ status: "rejected" }).eq("id", barberId);
+  if (error) throw error;
+}
+
+export interface RevenueBreakdown {
+  ytd: number;
+  month: number;
+  total: number;
+}
+
+function sumPrice(rows: { price: number }[]) {
+  return rows.reduce((sum, r) => sum + Number(r.price), 0);
+}
+
+// Revenue counts completed bookings only, bucketed by appointment `date`
+// (not created_at) so it reflects when the cut actually happened.
+export async function fetchRevenue(
+  supabase: SupabaseClient,
+  filter: { barberId?: string } = {}
+): Promise<RevenueBreakdown> {
+  const now = new Date();
+  const yearStart = `${now.getFullYear()}-01-01`;
+  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+
+  let query = supabase.from("bookings").select("price, date").eq("status", "completed");
+  if (filter.barberId) query = query.eq("barber_id", filter.barberId);
+  const { data, error } = await query;
+  if (error) throw error;
+  const rows = (data as { price: number; date: string }[]) ?? [];
+
+  return {
+    total: sumPrice(rows),
+    ytd: sumPrice(rows.filter((r) => r.date >= yearStart)),
+    month: sumPrice(rows.filter((r) => r.date >= monthStart)),
+  };
+}
+
+export interface ShopStats {
+  revenue: RevenueBreakdown;
+  totalBookings: number;
+  pendingBarbers: number;
+  crewSize: number;
+}
+
+export async function fetchShopStats(supabase: SupabaseClient): Promise<ShopStats> {
+  const [revenue, { count: totalBookings }, { count: pendingBarbers }, { count: crewSize }] = await Promise.all([
+    fetchRevenue(supabase),
+    supabase.from("bookings").select("id", { count: "exact", head: true }),
+    supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "barber").eq("status", "pending"),
+    supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "barber").eq("status", "approved"),
+  ]);
+  return {
+    revenue,
+    totalBookings: totalBookings ?? 0,
+    pendingBarbers: pendingBarbers ?? 0,
+    crewSize: crewSize ?? 0,
+  };
+}
+
+export interface BarberStats {
+  profile: Profile;
+  revenue: RevenueBreakdown;
+  totalBookings: number;
+  completedBookings: number;
+}
+
+export async function fetchBarberStats(supabase: SupabaseClient, barberId: string): Promise<BarberStats | null> {
+  const [{ data: profile }, revenue, { count: totalBookings }, { count: completedBookings }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", barberId).single(),
+    fetchRevenue(supabase, { barberId }),
+    supabase.from("bookings").select("id", { count: "exact", head: true }).eq("barber_id", barberId),
+    supabase.from("bookings").select("id", { count: "exact", head: true }).eq("barber_id", barberId).eq("status", "completed"),
+  ]);
+  if (!profile) return null;
+  return {
+    profile: profile as Profile,
+    revenue,
+    totalBookings: totalBookings ?? 0,
+    completedBookings: completedBookings ?? 0,
+  };
+}
+
 export async function notify(supabase: SupabaseClient, userId: string, text: string, icon: string) {
   await supabase.from("notifications").insert({ user_id: userId, text, icon, read: false });
 }

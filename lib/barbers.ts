@@ -10,6 +10,7 @@ export async function fetchBarbers(supabase: SupabaseClient): Promise<BarberWith
     .from("profiles")
     .select("*, barber_services(*)")
     .eq("role", "barber")
+    .eq("status", "approved")
     .order("name");
   if (error) throw error;
   return (data as BarberWithServices[]) ?? [];
