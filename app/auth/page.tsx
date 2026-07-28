@@ -318,20 +318,6 @@ export default function AuthPage() {
             <Marquee items={TICKER_ITEMS} />
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
-            {[
-              { big: "4.6★", small: "Avg Rating" },
-              { big: "10K+", small: "Cuts Done" },
-              { big: "Local", small: "Est. Lynnwood" },
-            ].map((s) => (
-              <div key={s.small} className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
-                <div className="font-headline text-[20px] text-gold">{s.big}</div>
-                <div className="mt-1 text-[10px] text-muted">{s.small}</div>
-              </div>
-            ))}
-            <LiveBookingCounter />
-          </div>
-
           <div className="mt-10">
             <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
@@ -372,6 +358,22 @@ export default function AuthPage() {
           </a>
         </div>
       </main>
+
+      <div className="relative z-10 mx-auto max-w-[1280px] px-6 pb-16 sm:px-10">
+        <div className="grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
+          {[
+            { big: "4.6★", small: "Avg Rating" },
+            { big: "10K+", small: "Cuts Done" },
+            { big: "Local", small: "Est. Lynnwood" },
+          ].map((s) => (
+            <div key={s.small} className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
+              <div className="font-headline text-[20px] text-gold">{s.big}</div>
+              <div className="mt-1 text-[10px] text-muted">{s.small}</div>
+            </div>
+          ))}
+          <LiveBookingCounter />
+        </div>
+      </div>
 
       <footer className="relative z-10 border-t border-line/[0.06] py-6 text-center text-[10.5px] text-faint">
         FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
