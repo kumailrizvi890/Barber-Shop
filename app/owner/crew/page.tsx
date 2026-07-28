@@ -59,7 +59,8 @@ export default function OwnerCrewPage() {
                   <BarberAvatar initials={b.initials} size={44} rounded={11} />
                   <div className="min-w-0 flex-1">
                     <div className="text-[14.5px] font-bold">{b.name}</div>
-                    <div className="truncate text-[11.5px] text-muted">{b.location || b.email || b.phone}</div>
+                    {b.location && <div className="truncate text-[11.5px] text-muted">{b.location}</div>}
+                    {b.email && <div className="truncate text-[11.5px] text-secondary">{b.email}</div>}
                   </div>
                 </div>
                 {b.bio && <div className="mt-2.5 text-[12px] leading-relaxed text-secondary">{b.bio}</div>}
