@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { initialsFor } from "@/lib/slots";
@@ -277,102 +278,159 @@ function AuthCard() {
 export default function AuthPage() {
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-bg">
-      <div className="grid-texture pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-gold/[0.10] blur-[140px]" />
-      <div className="pointer-events-none absolute -right-32 top-1/3 h-[440px] w-[440px] rounded-full bg-gold/[0.07] blur-[130px]" />
+      {/*
+        Hero photo + the "the shop" shot below are free-licensed Unsplash
+        stock (self-hosted in /public/images) — placeholders until real
+        shop/barber photography is swapped in. See PROJECT-HANDOFF.md.
+      */}
+      <section className="relative flex h-[92vh] min-h-[600px] w-full flex-col overflow-hidden bg-black">
+        <Image
+          src="/images/hero-cut.jpg"
+          alt="A Fade Kings barber detailing a fresh cut with shears"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[62%_22%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/92 via-black/35 to-black/5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-transparent" />
 
-      <header className="relative z-10 mx-auto flex max-w-[1280px] items-center justify-between px-6 pt-8 sm:px-10">
-        <Wordmark size={20} sub="LYNNWOOD" />
-        <a href="tel:+14253611190" className="flex items-center gap-2 text-[13px] font-bold text-secondary hover:text-gold">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          (425) 361-1190
-        </a>
-      </header>
-
-      <main className="relative z-10 mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-14 px-6 pb-20 pt-10 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pt-16">
-        <div className="relative min-w-0">
-          <div className="relative">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/25 bg-gold/[0.06] px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-gold">
-              LYNNWOOD, WA — WALK-INS &amp; BOOKINGS
-            </div>
-            <div className="font-headline text-[44px] leading-[1.02] tracking-tight sm:text-[58px] lg:text-[68px]">
-              FRESH
-              <br />
-              FADES.
-              <br />
-              <span className="text-gold">FAST BOOKS.</span>
-            </div>
-            <div className="mt-5 max-w-[420px] text-[14.5px] leading-[1.6] text-secondary sm:text-base">
-              Fade Kings Barber Shop — Lynnwood's chair, on your schedule. Browse the crew and prices, or lock in a slot in under a minute. No account required to look around.
-            </div>
+        <header className="relative z-10 mx-auto flex w-full max-w-[1280px] animate-fadeInUp items-center justify-between px-6 pt-8 sm:px-10">
+          <div className="text-white">
+            <Wordmark size={20} />
           </div>
+          <a href="tel:+14253611190" className="flex items-center gap-2 text-[13px] font-bold text-white/85 transition-colors hover:text-gold">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            (425) 361-1190
+          </a>
+        </header>
 
-          <div className="mt-8 overflow-hidden rounded-2xl border-y border-gold/20 bg-gold/5 py-3">
-            <Marquee items={TICKER_ITEMS} />
-          </div>
-
-          <div className="mt-10">
-            <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
-              {FEATURES.map((f) => (
-                <div key={f.title} className="flex items-center gap-3 rounded-[14px] border border-line/[0.07] bg-card px-3.5 py-[13px]">
-                  <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
-                  <div>
-                    <div className="text-[13px] font-bold">{f.title}</div>
-                    <div className="text-[11.5px] text-muted">{f.sub}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:sticky lg:top-16">
-          <AuthCard />
-          <a
-            href={MAPS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative mt-4 block h-[150px] overflow-hidden rounded-2xl border border-line/[0.07] transition-colors hover:border-gold/25"
+        <div className="relative z-10 mx-auto flex w-full max-w-[1280px] flex-1 flex-col justify-end px-6 pb-14 sm:px-10">
+          <div
+            className="mb-4 inline-flex w-fit animate-fadeInUp items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-gold backdrop-blur-sm"
+            style={{ animationDelay: "80ms" }}
           >
-            <iframe
-              src={`https://www.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&output=embed`}
-              className="pointer-events-none h-full w-full grayscale-[0.3] brightness-[0.85] contrast-[1.1]"
-              loading="lazy"
-              title="Fade Kings Barber Shop location"
-            />
-            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2.5 bg-gradient-to-t from-black/90 to-transparent px-4 pb-3 pt-8">
-              <div className="min-w-0 flex-1">
-                <div className="text-[13px] font-bold text-white">Fade Kings Barber Shop</div>
-                <div className="mt-0.5 text-[11px] text-white/70">Lynnwood, WA — tap for directions</div>
-              </div>
-              <div className="shrink-0 text-gold">→</div>
-            </div>
+            LYNNWOOD, WA — WALK-INS &amp; BOOKINGS
+          </div>
+          <h1
+            className="max-w-[780px] animate-fadeInUp font-headline text-[46px] leading-[0.98] tracking-tight text-white sm:text-[64px] lg:text-[84px]"
+            style={{ animationDelay: "160ms" }}
+          >
+            FRESH FADES.
+            <br />
+            <span className="text-gold">FAST BOOKS.</span>
+          </h1>
+          <p
+            className="mt-5 max-w-[440px] animate-fadeInUp text-[15px] leading-[1.6] text-white/75 sm:text-base"
+            style={{ animationDelay: "260ms" }}
+          >
+            Fade Kings Barber Shop — Lynnwood's chair, on your schedule. Browse the crew and prices, or lock in a slot in under a minute. No account required to look around.
+          </p>
+          <a
+            href="#book"
+            className="mt-7 inline-flex w-fit animate-fadeInUp items-center gap-2 rounded-md bg-goldsolid px-8 py-4 text-[14px] font-extrabold tracking-wide text-bg transition-transform hover:scale-[1.02]"
+            style={{ animationDelay: "340ms" }}
+          >
+            BOOK NOW <span aria-hidden>→</span>
           </a>
         </div>
-      </main>
+      </section>
 
-      <div className="relative z-10 mx-auto max-w-[1280px] px-6 pb-16 sm:px-10">
-        <div className="grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
-          {[
-            { big: "4.6★", small: "Avg Rating" },
-            { big: "10K+", small: "Cuts Done" },
-            { big: "Local", small: "Est. Lynnwood" },
-          ].map((s) => (
-            <div key={s.small} className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
-              <div className="font-headline text-[20px] text-gold">{s.big}</div>
-              <div className="mt-1 text-[10px] text-muted">{s.small}</div>
+      <div className="relative">
+        <div className="grid-texture pointer-events-none absolute inset-0" />
+
+        <main
+          id="book"
+          className="relative z-10 mx-auto grid max-w-[1280px] scroll-mt-6 grid-cols-1 gap-14 px-6 py-16 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:py-20"
+        >
+          <div className="relative min-w-0">
+            <div className="overflow-hidden rounded-2xl border-y border-gold/20 bg-gold/5 py-3">
+              <Marquee items={TICKER_ITEMS} />
             </div>
-          ))}
-          <LiveBookingCounter />
+
+            <div className="mt-10">
+              <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
+                {FEATURES.map((f) => (
+                  <div
+                    key={f.title}
+                    className="flex items-center gap-3 rounded-[14px] border border-line/[0.07] bg-card px-3.5 py-[13px] transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-lg"
+                  >
+                    <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
+                    <div>
+                      <div className="text-[13px] font-bold">{f.title}</div>
+                      <div className="text-[11.5px] text-muted">{f.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="group relative mt-10 h-[260px] overflow-hidden rounded-2xl border border-line/[0.07] sm:h-[320px]">
+              <Image
+                src="/images/hero-chairs.jpg"
+                alt="Fade Kings barber chairs"
+                fill
+                sizes="(min-width: 1024px) 55vw, 100vw"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
+          </div>
+
+          <div className="lg:sticky lg:top-16">
+            <AuthCard />
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative mt-4 block h-[150px] overflow-hidden rounded-2xl border border-line/[0.07] transition-colors hover:border-gold/25"
+            >
+              <iframe
+                src={`https://www.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&output=embed`}
+                className="pointer-events-none h-full w-full grayscale-[0.3] brightness-[0.85] contrast-[1.1]"
+                loading="lazy"
+                title="Fade Kings Barber Shop location"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex items-center gap-2.5 bg-gradient-to-t from-black/90 to-transparent px-4 pb-3 pt-8">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-bold text-white">Fade Kings Barber Shop</div>
+                  <div className="mt-0.5 text-[11px] text-white/70">Lynnwood, WA — tap for directions</div>
+                </div>
+                <div className="shrink-0 text-gold">→</div>
+              </div>
+            </a>
+          </div>
+        </main>
+
+        <div className="relative z-10 mx-auto max-w-[1280px] px-6 pb-16 sm:px-10">
+          <div className="grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
+            {[
+              { big: "4.6★", small: "Avg Rating" },
+              { big: "10K+", small: "Cuts Done" },
+              { big: "Local", small: "Est. Lynnwood" },
+            ].map((s) => (
+              <div key={s.small} className="rounded-[14px] border border-line/[0.07] bg-card px-2 py-4 text-center">
+                <div className="font-headline text-[20px] text-gold">{s.big}</div>
+                <div className="mt-1 text-[10px] text-muted">{s.small}</div>
+              </div>
+            ))}
+            <LiveBookingCounter />
+          </div>
         </div>
+
+        <footer className="relative z-10 border-t border-line/[0.06] py-6 text-center text-[10.5px] text-faint">
+          FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
+        </footer>
       </div>
 
-      <footer className="relative z-10 border-t border-line/[0.06] py-6 text-center text-[10.5px] text-faint">
-        FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
-      </footer>
+      <a
+        href="#book"
+        className="fixed bottom-4 right-4 z-[140] flex items-center gap-2 rounded-md bg-primary px-5 py-3.5 text-[12.5px] font-extrabold tracking-wide text-bg shadow-2xl transition-transform hover:scale-[1.03] sm:bottom-6 sm:right-6 sm:px-6 sm:py-4 sm:text-[13px]"
+      >
+        BOOK NOW <span aria-hidden>→</span>
+      </a>
     </div>
   );
 }
