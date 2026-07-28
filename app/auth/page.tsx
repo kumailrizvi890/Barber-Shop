@@ -7,7 +7,6 @@ import { initialsFor } from "@/lib/slots";
 import { toE164 } from "@/lib/phone";
 import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
-import { Hero3DGate } from "@/components/Hero3DGate";
 import { GoldButton } from "@/components/UI";
 import { LiveBookingCounter } from "@/components/LiveBookingCounter";
 
@@ -294,10 +293,6 @@ export default function AuthPage() {
 
       <main className="relative z-10 mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-14 px-6 pb-20 pt-10 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pt-16">
         <div className="relative min-w-0">
-          <div className="pointer-events-none absolute -right-16 -top-28 hidden h-[480px] w-[480px] lg:block">
-            <Hero3DGate />
-          </div>
-
           <div className="relative">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/25 bg-gold/[0.06] px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-gold">
               LYNNWOOD, WA — WALK-INS &amp; BOOKINGS
