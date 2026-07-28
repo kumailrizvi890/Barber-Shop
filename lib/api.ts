@@ -90,6 +90,105 @@ export async function fetchBarberStats(supabase: SupabaseClient, barberId: strin
   };
 }
 
+// Parses a Postgres `date` column ("YYYY-MM-DD") as a local-midnight Date.
+// `new Date("YYYY-MM-DD")` parses as UTC, which can shift the weekday/week
+// bucket by a day depending on the browser's timezone offset.
+function localDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function mondayOf(d: Date): Date {
+  const day = (d.getDay() + 6) % 7; // 0 = Monday
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - day);
+  return monday;
+}
+
+export interface RevenueTrendPoint {
+  label: string;
+  value: number;
+}
+
+export interface StatusCount {
+  status: Booking["status"];
+  count: number;
+}
+
+export interface BarberLeaderboardEntry {
+  barberId: string;
+  name: string;
+  revenue: number;
+}
+
+export interface ShopAnalytics {
+  revenueTrend: RevenueTrendPoint[];
+  statusBreakdown: StatusCount[];
+  topBarbers: BarberLeaderboardEntry[];
+  avgTicket: number;
+  completionRate: number | null;
+  busiestDay: { label: string; count: number } | null;
+  loyaltyPointsOutstanding: number;
+}
+
+export async function fetchShopAnalytics(supabase: SupabaseClient): Promise<ShopAnalytics> {
+  const [{ data: bookingsData }, { data: rewardsData }] = await Promise.all([
+    supabase.from("bookings").select("price, date, status, barber_id, barber:barber_id(name)"),
+    supabase.from("rewards").select("points"),
+  ]);
+
+  const bookings = (bookingsData as unknown as { price: number; date: string; status: string; barber_id: string; barber: { name: string } | null }[]) ?? [];
+  const completed = bookings.filter((b) => b.status === "completed");
+
+  // Revenue trend: last 8 Monday-start weeks.
+  const now = new Date();
+  const buckets = Array.from({ length: 8 }, (_, i) => {
+    const weekStart = mondayOf(new Date(now.getFullYear(), now.getMonth(), now.getDate() - (7 - i) * 7));
+    return { key: weekStart.toDateString(), label: weekStart.toLocaleDateString(undefined, { month: "short", day: "numeric" }), value: 0 };
+  });
+  const bucketIndex = new Map(buckets.map((b, i) => [b.key, i]));
+  for (const b of completed) {
+    const idx = bucketIndex.get(mondayOf(localDate(b.date)).toDateString());
+    if (idx !== undefined) buckets[idx].value += Number(b.price);
+  }
+
+  const statusOrder = ["completed", "approved", "pending", "declined"] as const;
+  const statusBreakdown = statusOrder
+    .map((status) => ({ status, count: bookings.filter((b) => b.status === status).length }))
+    .filter((s) => s.count > 0);
+
+  const byBarber = new Map<string, BarberLeaderboardEntry>();
+  for (const b of completed) {
+    const entry = byBarber.get(b.barber_id) ?? { barberId: b.barber_id, name: b.barber?.name ?? "Unknown", revenue: 0 };
+    entry.revenue += Number(b.price);
+    byBarber.set(b.barber_id, entry);
+  }
+  const topBarbers = [...byBarber.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+
+  const avgTicket = completed.length > 0 ? sumPrice(completed) / completed.length : 0;
+
+  const decided = bookings.filter((b) => b.status === "completed" || b.status === "declined");
+  const completionRate = decided.length > 0 ? completed.length / decided.length : null;
+
+  const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const weekdayCounts = new Array(7).fill(0);
+  for (const b of bookings) weekdayCounts[localDate(b.date).getDay()]++;
+  const busiestIdx = weekdayCounts.reduce((best, v, i) => (v > weekdayCounts[best] ? i : best), 0);
+  const busiestDay = weekdayCounts[busiestIdx] > 0 ? { label: weekdayNames[busiestIdx], count: weekdayCounts[busiestIdx] } : null;
+
+  const loyaltyPointsOutstanding = ((rewardsData as { points: number }[]) ?? []).reduce((sum, r) => sum + r.points, 0);
+
+  return {
+    revenueTrend: buckets.map(({ label, value }) => ({ label, value })),
+    statusBreakdown,
+    topBarbers,
+    avgTicket,
+    completionRate,
+    busiestDay,
+    loyaltyPointsOutstanding,
+  };
+}
+
 export async function notify(supabase: SupabaseClient, userId: string, text: string, icon: string) {
   await supabase.from("notifications").insert({ user_id: userId, text, icon, read: false });
 }

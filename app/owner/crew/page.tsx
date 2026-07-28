@@ -104,6 +104,19 @@ export default function OwnerCrewPage() {
               <div className="text-[12.5px] font-bold text-gold">★ {b.rating}</div>
               <div className="text-[10.5px] text-faint">{b.cuts_done} cuts</div>
             </div>
+            <button
+              disabled={busy === b.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (confirm(`Remove ${b.name} from the crew? They'll stop showing up for new bookings until re-approved.`)) {
+                  reject(b.id);
+                }
+              }}
+              title="Remove from crew"
+              className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted hover:bg-error/10 hover:text-error disabled:opacity-50"
+            >
+              ✕
+            </button>
           </div>
         ))}
         {approved.length === 0 && <div className="py-8 text-center text-xs text-faint">No approved barbers yet.</div>}

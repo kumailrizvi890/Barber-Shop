@@ -38,6 +38,7 @@ const config: Config = {
         floatSlow: { "0%, 100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-6px)" } },
         slideDown: { from: { transform: "translateY(-12px)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
         dotPing: { "0%, 100%": { transform: "scale(1)" }, "50%": { transform: "scale(1.3)" } },
+        fadeInUp: { from: { transform: "translateY(8px)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
       },
       animation: {
         pulseGold: "pulseGold 2s infinite",
@@ -45,6 +46,7 @@ const config: Config = {
         floatSlow: "floatSlow 3s ease-in-out infinite",
         slideDown: "slideDown 0.2s ease",
         dotPing: "dotPing 1.4s ease-in-out infinite",
+        fadeInUp: "fadeInUp 0.5s ease both",
       },
     },
   },

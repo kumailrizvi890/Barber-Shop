@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
 
 export function GoldButton({
   children,
@@ -40,9 +40,19 @@ export function GhostButton({
   );
 }
 
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function Card({
+  children,
+  className = "",
+  style,
+}: {
+  children: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) {
   return (
-    <div className={"bg-card border border-white/[0.07] rounded-2xl " + className}>{children}</div>
+    <div style={style} className={"bg-card border border-white/[0.07] rounded-2xl " + className}>
+      {children}
+    </div>
   );
 }
 
