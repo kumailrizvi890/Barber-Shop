@@ -10,6 +10,7 @@ import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
 import { GoldButton } from "@/components/UI";
 import { LiveBookingCounter } from "@/components/LiveBookingCounter";
+import { Reveal } from "@/components/Reveal";
 
 type DraftService = { id: number; name: string; price: number };
 
@@ -343,20 +344,23 @@ export default function AuthPage() {
 
         <main
           id="book"
-          className="relative z-10 mx-auto grid max-w-[1280px] scroll-mt-6 grid-cols-1 gap-14 px-6 py-16 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:py-20"
+          className="relative z-10 mx-auto grid max-w-[1280px] scroll-mt-6 grid-cols-1 gap-14 px-6 pb-16 pt-0 sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pb-20"
         >
           <div className="relative min-w-0">
-            <div className="overflow-hidden rounded-2xl border-y border-gold/20 bg-gold/5 py-3">
+            {/* Pulled up over the hero photo's bottom edge with a negative
+                margin so the two sections visually overlap instead of
+                meeting at a hard seam. */}
+            <div className="-mt-10 overflow-hidden rounded-2xl border-y border-gold/20 bg-gold/[0.08] py-3 shadow-xl backdrop-blur-sm sm:-mt-14">
               <Marquee items={TICKER_ITEMS} />
             </div>
 
-            <div className="mt-10">
+            <Reveal className="mt-10">
               <div className="mb-4 font-headline text-sm tracking-wide">WHY FADE KINGS</div>
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
+              <div className="flex flex-col divide-y divide-line/[0.06] rounded-2xl bg-card shadow-sm">
                 {FEATURES.map((f) => (
                   <div
                     key={f.title}
-                    className="flex items-center gap-3 rounded-[14px] border border-line/[0.07] bg-card px-3.5 py-[13px] transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-lg"
+                    className="flex items-center gap-3 px-4 py-4 transition-colors duration-300 hover:bg-gold/[0.05]"
                   >
                     <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-gold/[0.12]">{f.icon}</div>
                     <div>
@@ -366,9 +370,9 @@ export default function AuthPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
 
-            <div className="group relative mt-10 h-[260px] overflow-hidden rounded-2xl border border-line/[0.07] sm:h-[320px]">
+            <Reveal delay={120} className="group relative mt-10 h-[260px] overflow-hidden rounded-2xl border border-line/[0.07] sm:h-[320px]">
               <Image
                 src="/images/hero-chairs.jpg"
                 alt="Fade Kings barber chairs"
@@ -376,7 +380,7 @@ export default function AuthPage() {
                 sizes="(min-width: 1024px) 55vw, 100vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
-            </div>
+            </Reveal>
           </div>
 
           <div className="lg:sticky lg:top-16">
@@ -404,7 +408,7 @@ export default function AuthPage() {
           </div>
         </main>
 
-        <div className="relative z-10 mx-auto max-w-[1280px] px-6 pb-16 sm:px-10">
+        <Reveal className="relative z-10 mx-auto max-w-[1280px] px-6 pb-16 sm:px-10">
           <div className="grid grid-cols-2 gap-3 sm:max-w-md sm:grid-cols-4">
             {[
               { big: "4.6★", small: "Avg Rating" },
@@ -418,7 +422,7 @@ export default function AuthPage() {
             ))}
             <LiveBookingCounter />
           </div>
-        </div>
+        </Reveal>
 
         <footer className="relative z-10 border-t border-line/[0.06] py-6 text-center text-[10.5px] text-faint">
           FADE KINGS BARBER SHOP — LYNNWOOD, WA · (425) 361-1190 © 2026
