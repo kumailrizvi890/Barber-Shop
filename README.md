@@ -1,6 +1,6 @@
 # Fade Kings Barber Shop — Lynnwood
 
-A production Next.js booking app for Fade Kings Barber Shop (Lynnwood): customers can browse the crew and prices without an account, book a chair as a guest or a member, track appointments, and earn rewards; barbers approve/decline requests, manage weekly availability and services, and post work photos/videos.
+A full-stack Next.js booking app (demo build) for Fade Kings Barber Shop (Lynnwood): customers can browse the crew and prices without an account, book a chair as a guest or a member, track appointments, and earn rewards; barbers approve/decline requests, manage weekly availability and services, and post work photos/videos.
 
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase** (Postgres, Auth, Storage).
 
