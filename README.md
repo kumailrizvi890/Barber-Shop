@@ -49,7 +49,7 @@ Any other Node host (Railway, Render, Netlify, self-hosted) works too since this
 
 ## Pushing to GitHub
 
-No GitHub connection was active in this session, so the code lives in this folder rather than a repo. To publish it:
+To publish it:
 
 ```bash
 cd fade-kings   # this folder
