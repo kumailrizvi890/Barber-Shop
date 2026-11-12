@@ -328,7 +328,7 @@ export default function AuthPage() {
             className="mt-5 max-w-[440px] animate-fadeInUp text-[15px] leading-[1.6] text-white/75 sm:text-base"
             style={{ animationDelay: "260ms" }}
           >
-            Fade Kings Barber Shop — Lynnwood's chair, on your schedule. Browse the crew and prices, or lock in a slot in under a minute. No account required to look around.
+            Fade Kings Barber Shop — Lynnwood&apos;s chair, on your schedule. Browse the crew and prices, or lock in a slot in under a minute. No account required to look around.
           </p>
           <a
             href="#book"
