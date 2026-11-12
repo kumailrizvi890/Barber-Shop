@@ -8,6 +8,7 @@ import { initialsFor } from "@/lib/slots";
 import { toE164 } from "@/lib/phone";
 import { Wordmark } from "@/components/Logo";
 import { Marquee } from "@/components/Marquee";
+import { ShopSections } from "@/components/ShopSections";
 import { GoldButton } from "@/components/UI";
 import { LiveBookingCounter } from "@/components/LiveBookingCounter";
 import { Reveal } from "@/components/Reveal";
@@ -313,7 +314,7 @@ export default function AuthPage() {
             className="mb-4 inline-flex w-fit animate-fadeInUp items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-gold backdrop-blur-sm"
             style={{ animationDelay: "80ms" }}
           >
-            LYNNWOOD, WA — WALK-INS &amp; BOOKINGS
+            LYNNWOOD, WA · WALK-INS WELCOME · BOOKED IN 3 TAPS
           </div>
           <h1
             className="max-w-[780px] animate-fadeInUp font-headline text-[46px] leading-[0.98] tracking-tight text-white sm:text-[64px] lg:text-[84px]"
@@ -336,8 +337,11 @@ export default function AuthPage() {
           >
             BOOK NOW <span aria-hidden>→</span>
           </a>
-        </div>
-      </section>
+      <a href="#services" className="mt-4 inline-flex w-fit animate-fadeInUp items-center gap-2 text-[13px] font-extrabold uppercase tracking-wider text-white/85 transition-colors hover:text-gold" style={{ animationDelay: "400ms" }}>See prices <span aria-hidden>↓</span></a>
+    </div>
+  </section>
+
+      <ShopSections />
 
       <div className="relative">
         <div className="grid-texture pointer-events-none absolute inset-0" />
