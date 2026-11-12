@@ -44,7 +44,7 @@ export default function RewardsPage() {
       <div className="px-5 pb-7">
         <div className="mb-[18px] font-headline text-[19px]">REWARDS</div>
         <div className="rounded-[20px] border border-gold/25 p-[26px_20px] text-center" style={{ background: "linear-gradient(160deg, rgb(var(--color-surface2)), rgb(var(--color-cardalt)))" }}>
-          <div className="mb-2 text-[13px] font-bold">You're browsing as a guest</div>
+          <div className="mb-2 text-[13px] font-bold">You&apos;re browsing as a guest</div>
           <div className="mb-5 text-xs leading-relaxed text-secondary">
             Book your first cut and create an account to start earning 10 points per $1 — 5000 points unlocks a free cut.
           </div>
@@ -105,12 +105,12 @@ export default function RewardsPage() {
         <div>
           • Earn <span className="font-bold text-gold">10 points per $1</span> spent, credited as soon as your barber marks the appointment complete.
         </div>
-        <div>• 5000 points unlocks a free cut — redeeming gives you a QR code, and your barber scans it to confirm at checkout. Points aren't deducted until then.</div>
+        <div>• 5000 points unlocks a free cut — redeeming gives you a QR code, and your barber scans it to confirm at checkout. Points aren&apos;t deducted until then.</div>
       </div>
 
       {isAnonymous && (
         <div className="mb-5 rounded-2xl border border-gold/25 bg-card p-4 text-[12.5px] leading-snug text-secondary">
-          You're booking as a guest — your points are saved, but add a phone number and password to keep this account for next time.
+          You&apos;re booking as a guest — your points are saved, but add a phone number and password to keep this account for next time.
         </div>
       )}
 
