@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useApp } from "@/lib/context/AppContext";
-import { fetchBarbers, priceLabel, specialtyLabel, type BarberWithServices } from "@/lib/barbers";
+import { fetchBarbers, priceLabel, shopServices, specialtyLabel, type BarberWithServices } from "@/lib/barbers";
 import { BarberLottie } from "@/components/BarberLottie";
 import { BarberAvatar } from "@/components/UI";
 
@@ -13,6 +13,7 @@ export default function CustomerHomePage() {
   const router = useRouter();
   const { profile } = useApp();
   const [barbers, setBarbers] = useState<BarberWithServices[]>([]);
+  const services = useMemo(() => shopServices(barbers), [barbers]);
 
   useEffect(() => {
     fetchBarbers(supabase).then(setBarbers).catch(console.error);
@@ -53,8 +54,26 @@ export default function CustomerHomePage() {
         >
           Book Now →
         </button>
+        <div className="mt-2 text-center text-[11px] text-secondary">Booked in 3 taps — barber, service, time.</div>
       </div>
 
+            <div className="mb-3 flex items-baseline justify-between">
+        <div className="font-headline text-[15px] tracking-wide">SERVICES &amp; PRICES</div>
+        <div className="text-[11.5px] text-muted">{services.length} services</div>
+      </div>
+      <div className="mb-5 flex flex-col gap-2.5">
+        {services.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => router.push(`/customer/book?service=${s.id}`)}
+            className="flex w-full items-center justify-between rounded-2xl border border-line/[0.07] bg-card p-[12px_14px] text-left"
+          >
+            <span className="text-[14.5px] font-bold">{s.name}</span>
+            <span className="text-[13px] font-bold text-gold">{"From $" + s.price}</span>
+          </button>
+        ))}
+        {services.length === 0 && <div className="py-6 text-center text-xs text-faint">No prices to show yet — the crew sets their own prices.</div>}
+      </div>
       <div className="mb-3 flex items-baseline justify-between">
         <div className="font-headline text-[15px] tracking-wide">THE CREW</div>
         <div className="text-[11.5px] text-muted">{barbers.length} barbers</div>
