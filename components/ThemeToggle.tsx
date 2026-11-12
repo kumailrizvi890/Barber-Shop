@@ -7,22 +7,22 @@ const STORAGE_KEY = "fk-theme";
 export function ThemeToggle() {
   // Starts in sync with whatever the no-flash bootstrap script in the root
   // layout already applied to <html data-theme>, so there's no mismatch
-  // between server-rendered markup and the client's first render.
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // between server-rendered markup and the client's first render. Dark
+  // (black-and-gold) is the default theme, so the initial state is dark.
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
-    const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const current = document.documentElement.dataset.theme === "light" ? "light" : "dark";
     setTheme(current);
   }, []);
 
   function toggle() {
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
-    if (next === "light") {
-      document.documentElement.removeAttribute("data-theme");
-    } else {
-      document.documentElement.dataset.theme = "dark";
-    }
+    // Always set an explicit theme. The CSS default (:root) is dark and
+    // `[data-theme="light"]` is the light opt-in, so removing the attribute
+    // would silently mean "dark" — set the value instead.
+    document.documentElement.dataset.theme = next;
     localStorage.setItem(STORAGE_KEY, next);
   }
 
