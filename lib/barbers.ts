@@ -29,12 +29,12 @@ export function priceLabel(b: BarberWithServices) {
 // One row of the shop's services menu: every distinct service the approved
 // barbers offer, priced from the cheapest barber who does it. Kept here so
 // the landing page and the customer home show the same prices from the same
-// real data instead of each building its own list.
+// real data instead of each building its own list. Services carry a name
+// and a price only — there is no duration in the data, so none is shown.
 export interface ShopService {
   id: string;
   name: string;
   price: number;
-  duration_minutes: number;
   barberIds: string[];
 }
 
@@ -48,7 +48,6 @@ export function shopServices(barbers: BarberWithServices[]): ShopService[] {
           id: service.id,
           name: service.name,
           price: service.price,
-          duration_minutes: service.duration_minutes,
           barberIds: [barber.id],
         });
       } else {
@@ -56,7 +55,6 @@ export function shopServices(barbers: BarberWithServices[]): ShopService[] {
         if (service.price < existing.price) {
           existing.id = service.id;
           existing.price = service.price;
-          existing.duration_minutes = service.duration_minutes;
         }
       }
     }
