@@ -4,6 +4,8 @@ A full-stack Next.js booking app (demo build) for Fade Kings Barber Shop (Lynnwo
 
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase** (Postgres, Auth, Storage).
 
+The theme is black and gold by default (dark), with a warm light palette on the toggle.
+
 ## 1. Create a Supabase project
 
 1. Go to [supabase.com](https://supabase.com) → New Project.
@@ -33,6 +35,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 npm install
 npm run dev
 ```
+
+
+Other scripts: `npm run lint`, `npm run build`, and `npm test` (runs a production build as a smoke test). Every push to `main` runs the same lint and build on GitHub Actions (`.github/workflows/ci.yml`).
 
 Open [http://localhost:3000](http://localhost:3000) — you'll land on `/auth`. Sign up once as a **Barber** (email + password, add at least one service) so there's someone to book. Customers don't need an account at all: click **"Browse Without Signing Up"** to look around and book — an account only gets created (as a phone-number login) if they choose to save the appointment afterward.
 
@@ -82,7 +87,7 @@ New barber signups now land on a "Application under review" screen (`/pending`) 
 
 - **Auth**: barbers use email/password; customers use phone/password. Role picker on signup; barber signup also collects location/bio and a repeatable services-&-rates builder.
 - **Guest checkout**: customers can browse barbers, prices, and availability with zero account (public read access via RLS), and complete a full booking as a Supabase anonymous session. After booking, they're prompted to add a name/phone/password to keep the appointment and start earning points — this *upgrades* the same anonymous account in place (via `supabase.auth.updateUser`), so nothing already booked is lost or re-created under a new id.
-- **Customer app**: Home (crew list, book-now hero), 3-step Book flow (barber → service/date/time → confirm) plus a 4th "save your spot" step for guests, Bookings list with status stripes and tap-to-rate, Rewards (points, progress bar, 5000-pt redemption).
+- **Customer app**: Home (crew list, services & prices, book-now hero), 3-step Book flow (barber → service/date/time → confirm) with a live booking summary and deep links (`/customer/book?barber=<id>` and `?service=<id>`) that pre-pick the barber or service,  plus a 4th "save your spot" step for guests, Bookings list with status stripes and tap-to-rate, Rewards (points, progress bar, 5000-pt redemption).
 - **Barber app**: Requests (approve/decline), Schedule (Bookings sub-tab with reminder/complete actions; Availability sub-tab with per-weekday recurring slot blocking), Profile (services CRUD, My Work photo/video uploads to Supabase Storage).
 - **Notifications**: bell + slide-down panel, generated on request/approve/decline/reminder/completion, unread badge, mark-as-read.
 - **Rewards**: 10 points per $1, credited on rating; 5000-point redemption.
