@@ -34,7 +34,7 @@ export function RedeemQRModal({
         <div className="flex h-[280px] w-[280px] items-center justify-center rounded-2xl border border-gold/25 text-xs text-faint">Generating…</div>
       )}
       <div className="mt-6 max-w-[280px] text-[12px] leading-relaxed text-faint">
-        Your barber scans this to confirm — your points aren't deducted until they do.
+        Your barber scans this to confirm — your points aren&apos;t deducted until they do.
       </div>
     </div>,
     document.body
