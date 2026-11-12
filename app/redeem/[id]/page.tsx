@@ -54,7 +54,7 @@ export default function RedeemPage() {
       {loading ? (
         <div className="text-sm text-muted">Loading…</div>
       ) : !redemption ? (
-        <div className="text-sm text-muted">Couldn't find that redemption code.</div>
+        <div className="text-sm text-muted">Couldn&apos;t find that redemption code.</div>
       ) : (
         <div className="w-full max-w-[360px] rounded-[20px] border border-gold/25 bg-card p-6">
           <div className="mb-1 font-headline text-lg">
@@ -72,7 +72,7 @@ export default function RedeemPage() {
             </GoldButton>
           ) : (
             <div className="rounded-xl border border-line/[0.07] bg-inputbg p-4 text-[13px] text-secondary">
-              Show this screen to your barber — they'll confirm it to redeem your free cut.
+              Show this screen to your barber — they&apos;ll confirm it to redeem your free cut.
             </div>
           )}
         </div>
