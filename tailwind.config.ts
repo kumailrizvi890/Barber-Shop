@@ -1,11 +1,10 @@
 import type { Config } from "tailwindcss";
 
-// Reads a "R G B" CSS custom property so Tailwind's opacity modifiers
-// (bg-gold/10, border-line/[0.07]) keep working across the light/dark
-// token swap in app/globals.css.
 function withOpacity(variable: string) {
-  return ({ opacityValue }: { opacityValue?: string }) =>
-    opacityValue === undefined ? `rgb(var(${variable}))` : `rgb(var(${variable}) / ${opacityValue})`;
+  return (opacityValue?: string | number) =>
+    opacityValue === undefined
+      ? `rgb(var(${variable}))`
+      : `rgb(var(${variable}) / ${opacityValue})`;
 }
 
 // Tailwind's own Config type predates its documented function-value color
@@ -38,8 +37,9 @@ const config: Config = {
         headline: ["var(--font-archivo)", "sans-serif"],
         body: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
+      // Fade Kings redesign: sharp edges — cards are square, not rounded.
       borderRadius: {
-        card: "18px",
+        card: "0px",
       },
       keyframes: {
         pulseGold: {
@@ -68,4 +68,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;
