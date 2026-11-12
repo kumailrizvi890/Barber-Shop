@@ -180,6 +180,16 @@ export default function BookPage() {
   return (
     <div className="px-5 pb-7">
       <div className="mb-1 font-headline text-[19px]">BOOK A CHAIR</div>
+    <div className="barber-pole mb-3 h-2 w-full" aria-hidden="true" />
+    {step !== 4 && (
+      <div className="mb-1 flex items-center gap-2 text-[11px] font-extrabold tracking-wider">
+        <span className={step >= 1 ? "text-gold" : "text-muted"}>1 BARBER</span>
+        <span className="text-muted">→</span>
+        <span className={step >= 2 ? "text-gold" : "text-muted"}>2 SERVICE & TIME</span>
+        <span className="text-muted">→</span>
+        <span className={step >= 3 ? "text-gold" : "text-muted"}>3 CONFIRM</span>
+      </div>
+    )}
       {step !== 4 && <div className="mb-[18px] text-xs text-muted">{stepLabel}</div>}
 
       {step === 1 && (
