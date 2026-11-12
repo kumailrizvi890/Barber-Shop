@@ -190,7 +190,31 @@ export default function BookPage() {
         <span className={step >= 3 ? "text-gold" : "text-muted"}>3 CONFIRM</span>
       </div>
     )}
-      {step !== 4 && <div className="mb-[18px] text-xs text-muted">{stepLabel}</div>}
+          {step !== 4 && <div className="mb-[18px] text-xs text-muted">{stepLabel}</div>}
+    {(step === 1 || step === 2) && (
+      <div className="mb-[18px] rounded-2xl border border-gold/25 bg-card p-[16px]">
+        <div className="mb-1 font-headline text-[13px] tracking-wide text-gold">YOUR BOOKING</div>
+        <div className="flex justify-between py-[7px] text-[12.5px]">
+          <span className="text-muted">Barber</span>
+          <span className="font-bold">{selectedBarber ? selectedBarber.name : "Pick your barber"}</span>
+        </div>
+        <div className="flex justify-between border-t border-line/[0.07] py-[7px] text-[12.5px]">
+          <span className="text-muted">Service</span>
+          <span className="font-bold">{selectedService ? selectedService.name + " · $" + selectedService.price : "Pick a service"}</span>
+        </div>
+        <div className="flex justify-between border-t border-line/[0.07] py-[7px] text-[12.5px]">
+          <span className="text-muted">When</span>
+          <span className="font-bold">{time ? dates[dateIdx].label + " · " + time : "Pick a time"}</span>
+        </div>
+        <div className="flex justify-between border-t border-line/[0.07] pt-[10px] text-[12.5px]">
+          <span className="text-muted">Due now</span>
+          <span className="font-bold text-gold">$0</span>
+        </div>
+        <div className="mt-1 text-[11.5px] text-muted">
+          {selectedService ? "Pay $" + selectedService.price + " at the shop." : "Nothing is charged when you book — pay at the shop."}
+        </div>
+      </div>
+    )}
 
       {step === 1 && (
         <div className="flex flex-col gap-2.5">
