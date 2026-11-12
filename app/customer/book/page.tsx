@@ -49,13 +49,35 @@ export default function BookPage() {
   useEffect(() => {
     fetchBarbers(supabase).then((list) => {
       setBarbers(list);
-      const pending = sessionStorage.getItem("fh_book_barber");
+            const pending = sessionStorage.getItem("fh_book_barber");
       if (pending) {
         sessionStorage.removeItem("fh_book_barber");
         const b = list.find((x) => x.id === pending);
         if (b) {
           setBarberId(b.id);
           setServiceId(b.barber_services[0]?.id ?? null);
+          setStep(2);
+          return;
+        }
+      }
+      const params = new URLSearchParams(window.location.search);
+      const barberParam = params.get("barber");
+      const serviceParam = params.get("service");
+      if (barberParam) {
+        const b = list.find((x) => x.id === barberParam);
+        if (b) {
+          setBarberId(b.id);
+          const svc = serviceParam ? b.barber_services.find((s) => s.id === serviceParam) : undefined;
+          setServiceId(svc?.id ?? b.barber_services[0]?.id ?? null);
+          setStep(2);
+          return;
+        }
+      }
+      if (serviceParam) {
+        const b = list.find((x) => x.barber_services.some((s) => s.id === serviceParam));
+        if (b) {
+          setBarberId(b.id);
+          setServiceId(serviceParam);
           setStep(2);
         }
       }
