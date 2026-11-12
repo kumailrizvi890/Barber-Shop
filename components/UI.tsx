@@ -1,19 +1,26 @@
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
+"use client";
 
-export function GoldButton({
-  children,
-  className = "",
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode }) {
+import type { CSSProperties, ReactNode } from "react";
+
+type ButtonProps = {
+  children: ReactNode;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  disabled?: boolean;
+  className?: string;
+};
+
+// Fade Kings redesign: buttons and cards are sharp — square corners,
+// uppercase labels, gold-on-black. (globals.css also flattens the larger
+// `rounded-*` radii theme-wide; these classes state the intent here too.)
+export function GoldButton({ children, onClick, type = "button", disabled, className = "" }: ButtonProps) {
   return (
     <button
-      {...props}
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
       className={
-        "w-full rounded-xl py-[15px] font-body font-extrabold text-[15px] transition-colors " +
-        (props.disabled
-          ? "bg-surface2 text-faint cursor-not-allowed"
-          : "bg-goldsolid text-bg cursor-pointer hover:opacity-90") +
-        " " +
+        "inline-flex items-center justify-center gap-2 bg-gold text-black font-extrabold uppercase tracking-wide px-6 py-3.5 rounded-none text-[15px] shadow-[0_10px_30px_rgba(198,148,47,0.35)] transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed " +
         className
       }
     >
@@ -22,16 +29,14 @@ export function GoldButton({
   );
 }
 
-export function GhostButton({
-  children,
-  className = "",
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode }) {
+export function GhostButton({ children, onClick, type = "button", disabled, className = "" }: ButtonProps) {
   return (
     <button
-      {...props}
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
       className={
-        "w-full rounded-xl py-[13px] font-body font-semibold text-[13.5px] border border-line/15 bg-transparent text-secondary cursor-pointer hover:border-line/30 " +
+        "inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-none border-2 border-line/15 text-[15px] font-extrabold uppercase tracking-wide hover:border-gold/50 hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed " +
         className
       }
     >
@@ -50,19 +55,17 @@ export function Card({
   style?: CSSProperties;
 }) {
   return (
-    <div style={style} className={"bg-card border border-line/[0.07] rounded-2xl " + className}>
+    <div style={style} className={"bg-card border border-line/[0.07] rounded-none " + className}>
       {children}
     </div>
   );
 }
 
 export function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <div className="text-[11.5px] font-bold text-muted tracking-wide mb-2">{children}</div>
-  );
+  return <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-gold mb-2">{children}</div>;
 }
 
-export function BarberAvatar({ initials, size = 52, rounded = 12 }: { initials: string; size?: number; rounded?: number }) {
+export function BarberAvatar({ initials, size = 52, rounded = 0 }: { initials: string; size?: number; rounded?: number }) {
   return (
     <div
       className="flex shrink-0 items-center justify-center font-headline text-gold border border-gold/20"
@@ -90,10 +93,7 @@ const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }
 export function StatusBadge({ status }: { status: string }) {
   const s = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
   return (
-    <div
-      className="text-[10.5px] font-extrabold tracking-wide px-[9px] py-1 rounded-lg"
-      style={{ background: s.bg, color: s.color }}
-    >
+    <div className="text-[10.5px] font-extrabold tracking-wide px-[9px] py-1 rounded-none" style={{ background: s.bg, color: s.color }}>
       {s.label}
     </div>
   );
@@ -106,8 +106,8 @@ export function statusStripeColor(status: string) {
       approved: "rgb(var(--color-success))",
       declined: "rgb(var(--color-error))",
       completed: "rgb(var(--color-goldsolid))",
-    }[status] ?? "rgb(var(--color-faint))"
-  );
+    } as Record<string, string>
+  )[status] ?? "rgb(var(--color-faint))";
 }
 
 export function StarRow({
