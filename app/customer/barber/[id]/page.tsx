@@ -43,7 +43,7 @@ export default function BarberProfileViewPage() {
   if (!data) {
     return (
       <div className="px-5 py-10 text-center text-xs text-faint">
-        Couldn't find that barber.
+        Couldn&apos;t find that barber.
         <div className="mt-3">
           <GoldButton onClick={() => router.push("/customer/home")}>Back to Home</GoldButton>
         </div>
