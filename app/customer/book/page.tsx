@@ -348,7 +348,7 @@ export default function BookPage() {
             </div>
           </div>
           <div className="mb-1 text-center font-headline text-lg">CONFIRM YOUR SLOT</div>
-          <div className="mb-[22px] text-center text-xs text-muted">Your barber will approve the request before it's locked in</div>
+          <div className="mb-[22px] text-center text-xs text-muted">Your barber will approve the request before it&apos;s locked in</div>
 
           <div className="mb-[22px] rounded-2xl border border-gold/25 bg-card p-[18px]">
             {[
@@ -390,9 +390,9 @@ export default function BookPage() {
 
           {converted ? (
             <>
-              <div className="mb-1 text-center font-headline text-lg">YOU'RE ALL SET</div>
+              <div className="mb-1 text-center font-headline text-lg">YOU&apos;RE ALL SET</div>
               <div className="mb-[22px] text-center text-xs text-muted">
-                Your appointment is saved and you're earning points on every visit.
+                Your appointment is saved and you&apos;re earning points on every visit.
               </div>
               <GoldButton onClick={() => router.push("/customer/bookings")}>View My Appointments</GoldButton>
             </>
