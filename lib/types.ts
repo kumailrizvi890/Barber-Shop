@@ -101,5 +101,4 @@ export interface RewardRedemption {
 
 // Minimal Database type placeholder so @supabase/ssr generics are satisfied.
 // Replace with `supabase gen types typescript` output for full type safety.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Database = any;
