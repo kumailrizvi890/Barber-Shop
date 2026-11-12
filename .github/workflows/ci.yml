@@ -9,6 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Build-only placeholders, same as .env.example. next build needs these set
+      # so the Supabase client can be created while prerendering. Pages fetch data
+      # in the browser, so CI needs no real project here; the real values live in Vercel.
+      NEXT_PUBLIC_SUPABASE_URL: https://your-project.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: your-anon-key
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
