@@ -23,34 +23,39 @@ export function Marquee({ items, speedPxPerSec = 55 }: { items: string[]; speedP
   const duration = setWidth > 0 ? setWidth / speedPxPerSec : 20;
 
   return (
-    <div className="overflow-hidden">
-      <div
-        className="flex w-max"
-        style={
-          setWidth > 0
-            ? ({
-                "--marquee-w": `${setWidth}px`,
-                animation: `marquee-precise ${duration}s linear infinite`,
-                willChange: "transform",
-              } as CSSProperties)
-            : undefined
-        }
-      >
-        <div ref={setRef} className="flex w-max shrink-0">
-          {items.map((t, i) => (
-            <div key={i} className="whitespace-nowrap px-[18px] font-headline text-[13px] tracking-wide text-gold">
-              {t}
-            </div>
-          ))}
-        </div>
-        <div aria-hidden className="flex w-max shrink-0">
-          {items.map((t, i) => (
-            <div key={i} className="whitespace-nowrap px-[18px] font-headline text-[13px] tracking-wide text-gold">
-              {t}
-            </div>
-          ))}
+    <div>
+      <div className="overflow-hidden">
+        <div
+          className="flex w-max"
+          style={
+            setWidth > 0
+              ? ({
+                  "--marquee-w": `${setWidth}px`,
+                  animation: `marquee-precise ${duration}s linear infinite`,
+                  willChange: "transform",
+                } as CSSProperties)
+              : undefined
+          }
+        >
+          <div ref={setRef} className="flex w-max shrink-0">
+            {items.map((t, i) => (
+              <div key={i} className="whitespace-nowrap px-[18px] font-headline text-[13px] tracking-wide text-gold">
+                {t}
+              </div>
+            ))}
+          </div>
+          <div aria-hidden className="flex w-max shrink-0">
+            {items.map((t, i) => (
+              <div key={i} className="whitespace-nowrap px-[18px] font-headline text-[13px] tracking-wide text-gold">
+                {t}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+      {/* Barber-pole accent: a thin strip of classic red / white / blue
+          stripes that drifts like a spinning pole, under the ticker. */}
+      <div className="barber-pole-animated h-2 w-full" aria-hidden="true" />
     </div>
   );
 }
