@@ -2,60 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Theme tokens, as "R G B" triplets so Tailwind can compose them with its
- * opacity modifiers (bg-gold/10, border-line/[0.07], etc). Light is the
- * default surface; [data-theme="dark"] (set by ThemeToggle, persisted in
- * localStorage) overrides every token below with the original dark palette.
- * `gold` doubles as body text color on the page background, so it has to
- * re-tune for contrast per theme — `goldsolid` (button/badge/chart fills,
- * always paired with dark text on top) can stay a consistent brand gold.
- */
+/* --- Tailwind tokens are driven by these CSS vars (theme tokens).
+   Fade Kings redesign: the default (:root) is the bold black-and-gold
+   barbershop theme — deep near-black surfaces, cream text, gold accents,
+   sharp (square) corners. The `[data-theme="light"]` overrides below keep
+   the previous warm cream "paper" theme available as an opt-in. Switches
+   are instant because the tokens, not the classes, change. Keep tokens
+   here — most inline Tailwind classes reference them via
+   `rgb(var(--color-*))`. -- */
+
 :root {
-  color-scheme: light;
-
-  --color-bg: 232 226 212;
-  --color-card: 248 245 238;
-  --color-cardalt: 241 236 224;
-  --color-inputbg: 236 230 217;
-  --color-surface2: 224 217 199;
-  --color-line: 42 33 24;
-
-  --color-gold: 169 117 43;
-  --color-goldsolid: 198 148 47;
-  --color-golddark: 138 94 32;
-  --color-success: 79 122 87;
-  --color-error: 168 72 61;
-
-  --color-primary: 42 33 24;
-  --color-secondary: 92 82 66;
-  --color-muted: 117 107 88;
-  --color-faint: 150 139 116;
-}
-
-:root[data-theme="dark"] {
   color-scheme: dark;
-
   --color-bg: 10 10 10;
   --color-card: 20 20 20;
   --color-cardalt: 17 17 17;
   --color-inputbg: 28 28 28;
   --color-surface2: 35 35 35;
   --color-line: 255 255 255;
-
   --color-gold: 212 175 55;
   --color-goldsolid: 212 175 55;
-  --color-golddark: 168 132 42;
-  --color-success: 95 206 137;
-  --color-error: 224 112 112;
-
-  --color-primary: 245 245 240;
-  --color-secondary: 163 163 156;
-  --color-muted: 143 143 137;
-  --color-faint: 107 107 102;
+  --color-golddark: 162 127 34;
+  --color-success: 42 230 147;
+  --color-error: 255 107 90;
+  --color-primary: 255 255 255;
+  --color-secondary: 212 212 212;
+  --color-muted: 168 168 168;
+  --color-faint: 120 120 120;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: 232 226 212;
+  --color-card: 248 245 238;
+  --color-cardalt: 241 236 224;
+  --color-inputbg: 236 230 217;
+  --color-surface2: 224 217 199;
+  --color-line: 42 33 24;
+  --color-gold: 169 117 43;
+  --color-goldsolid: 198 148 47;
+  --color-golddark: 138 94 32;
+  --color-success: 79 122 87;
+  --color-error: 168 72 61;
+  --color-primary: 42 33 24;
+  --color-secondary: 92 82 66;
+  --color-muted: 117 107 88;
+  --color-faint: 150 139 116;
 }
 
-html, body {
+html,
+body {
   background: rgb(var(--color-bg));
   color: rgb(var(--color-primary));
 }
@@ -68,15 +62,21 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+:focus-visible {
+  outline: 2px solid rgb(var(--color-gold));
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  *, *::before, *::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -94,8 +94,55 @@ textarea {
 }
 
 @keyframes marquee-precise {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(calc(-1 * var(--marquee-w)), 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-1 * var(--marquee-w)), 0, 0);
+  }
+}
+
+/* Fade Kings redesign: sharp edges everywhere. The redesign uses square
+   corners — no rounded cards, buttons or photos. Rather than chasing every
+   `rounded-*` class across the app, the theme flattens the larger radii
+   here. `rounded-full` (status dots, toggle knob, avatars that are meant
+   to be circular) is intentionally left alone. */
+:is(.rounded-2xl, .rounded-xl, .rounded-lg, .rounded-3xl, .rounded-md) {
+  border-radius: 0;
+}
+
+/* Fade Kings redesign: barber-pole accent. Classic red / white / blue
+   diagonal stripes, as seen on a shop pole. Use as a thin divider strip
+   (`h-2 w-full`) or a vertical side rail (`w-2 h-full`). The animated
+   variant drifts the stripes sideways, like a spinning pole; it respects
+   `prefers-reduced-motion` via the rule above. */
+.barber-pole {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #b91c1c 0 14px,
+    #faf7f0 14px 28px,
+    #1d4ed8 28px 42px,
+    #faf7f0 42px 56px
+  );
+}
+.barber-pole-animated {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #b91c1c 0 14px,
+    #faf7f0 14px 28px,
+    #1d4ed8 28px 42px,
+    #faf7f0 42px 56px
+  );
+  background-size: 200% 100%;
+  animation: pole-scroll 2.4s linear infinite;
+}
+@keyframes pole-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 79px 0;
+  }
 }
 
 /* Faint structural grid for the landing page's "futuristic" backdrop. */
@@ -122,7 +169,7 @@ textarea {
     margin-top: 32px;
     margin-bottom: 32px;
     min-height: calc(100dvh - 64px);
-    border-radius: 28px;
+    border-radius: 0;
     border: 1px solid rgb(var(--color-line) / 0.08);
     overflow: hidden;
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
