@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useApp } from "@/lib/context/AppContext";
 import { fetchBarbers, priceLabel, specialtyLabel, type BarberWithServices } from "@/lib/barbers";
+import { isDemoBarberId } from "@/lib/demo-data";
+import { withTimeout } from "@/lib/with-timeout";
 import { TIME_SLOTS, next7Days, initialsFor } from "@/lib/slots";
 import { toE164 } from "@/lib/phone";
 import { requestBooking } from "@/lib/api";
@@ -41,6 +43,7 @@ export default function BookPage() {
   const [converting, setConverting] = useState(false);
   const [convertError, setConvertError] = useState<string | null>(null);
   const [converted, setConverted] = useState(false);
+  const [demoBooked, setDemoBooked] = useState(false);
 
   const dates = useMemo(() => next7Days(), []);
   const selectedBarber = barbers.find((b) => b.id === barberId) ?? null;
@@ -91,11 +94,17 @@ export default function BookPage() {
       .select("weekday, slot_index, blocked")
       .eq("barber_id", barberId)
       .eq("blocked", true)
-      .then(({ data }) => {
-        const set = new Set<string>();
-        (data ?? []).forEach((r: any) => set.add(`${r.weekday}_${r.slot_index}`));
-        setBlockedSet(set);
-      });
+      .then(
+        ({ data }) => {
+          const set = new Set<string>();
+          (data ?? []).forEach((r: any) => set.add(`${r.weekday}_${r.slot_index}`));
+          setBlockedSet(set);
+        },
+        () => {
+          // Live availability unreachable (paused project): the demo's
+          // deterministic slot pattern still applies below.
+        }
+      );
   }, [barberId, supabase]);
 
   function pickBarber(b: BarberWithServices) {
@@ -116,7 +125,8 @@ export default function BookPage() {
     if (!selectedBarber || !selectedService || !time) return;
     setSubmitting(true);
     try {
-      const bookingProfile = await ensureGuestProfile();
+      const bookingProfile = await withTimeout(ensureGuestProfile(), 5000);
+      if (!bookingProfile) throw new Error("Guest session timed out.");
       await requestBooking(supabase, {
         customerId: bookingProfile.id,
         customerName: bookingProfile.name,
@@ -137,6 +147,29 @@ export default function BookPage() {
       }
     } catch (e) {
       console.error(e);
+      // The live backend is unreachable (paused project) and this is a
+      // sample barber: keep the demo flow moving with a booking noted on
+      // this device only, instead of leaving the visitor stuck on step 3
+      // with no confirmation. Real barbers keep the strict path above.
+      if (selectedBarber && isDemoBarberId(selectedBarber.id)) {
+        try {
+          sessionStorage.setItem(
+            "fk_demo_booking",
+            JSON.stringify({
+              barber: selectedBarber.name,
+              service: selectedService.name,
+              price: selectedService.price,
+              date: dates[dateIdx].label,
+              time,
+            })
+          );
+        } catch {
+          // Private mode or storage blocked: the on-screen confirmation
+          // below still shows, it just is not persisted.
+        }
+        setDemoBooked(true);
+        setStep(4);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -170,11 +203,11 @@ export default function BookPage() {
 
   const stepLabel =
     step === 1
-      ? "Step 1 of 3 — Pick your barber"
+      ? "Step 1 of 3 - Pick your barber"
       : step === 2
-      ? "Step 2 of 3 — Service, date & time"
+      ? "Step 2 of 3 - Service, date & time"
       : step === 3
-      ? "Step 3 of 3 — Confirm"
+      ? "Step 3 of 3 - Confirm"
       : "Booked! Save your spot";
 
   return (
@@ -211,7 +244,7 @@ export default function BookPage() {
           <span className="font-bold text-gold">$0</span>
         </div>
         <div className="mt-1 text-[11.5px] text-muted">
-          {selectedService ? "Pay $" + selectedService.price + " at the shop." : "Nothing is charged when you book — pay at the shop."}
+          {selectedService ? "Pay $" + selectedService.price + " at the shop." : "Nothing is charged when you book. Pay at the shop."}
         </div>
       </div>
     )}
@@ -388,7 +421,17 @@ export default function BookPage() {
             </div>
           </div>
 
-          {converted ? (
+          {demoBooked ? (
+            <>
+              <div className="mb-1 text-center font-headline text-lg">REQUEST NOTED</div>
+              <div className="mb-[22px] text-center text-xs leading-relaxed text-muted">
+                Demo booking: {selectedService ? `${selectedService.name} with ${selectedBarber?.name ?? ""}` : ""} on{" "}
+                {dates[dateIdx].label} at {time}. The live booking system is paused, so this request is saved on this
+                device only and was not sent to the shop.
+              </div>
+              <GoldButton onClick={() => router.push("/customer/home")}>Back to Home</GoldButton>
+            </>
+          ) : converted ? (
             <>
               <div className="mb-1 text-center font-headline text-lg">YOU&apos;RE ALL SET</div>
               <div className="mb-[22px] text-center text-xs text-muted">
@@ -400,7 +443,7 @@ export default function BookPage() {
             <>
               <div className="mb-1 text-center font-headline text-lg">REQUEST SENT!</div>
               <div className="mb-[22px] text-center text-xs leading-relaxed text-muted">
-                Save this appointment and start earning 10 points per $1 toward a free cut — just add your name, phone, and a password.
+                Save this appointment and start earning 10 points per $1 toward a free cut. Just add your name, phone, and a password.
               </div>
 
               <input
