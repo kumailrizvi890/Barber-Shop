@@ -44,7 +44,7 @@ export default function CustomerHomePage() {
               <span className="text-gold">FAST BOOK</span>
             </div>
             <div className="mt-2 text-xs leading-snug text-secondary">
-              Hey {profile?.name ?? "there"} — earn points on every cut.
+              Hey {profile?.name ?? "there"}. Earn points on every cut.
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function CustomerHomePage() {
         >
           Book Now →
         </button>
-        <div className="mt-2 text-center text-[11px] text-secondary">Booked in 3 taps — barber, service, time.</div>
+        <div className="mt-2 text-center text-[11px] text-secondary">Booked in 3 taps: barber, service, time.</div>
       </div>
 
             <div className="mb-3 flex items-baseline justify-between">
@@ -72,7 +72,7 @@ export default function CustomerHomePage() {
             <span className="text-[13px] font-bold text-gold">{"From $" + s.price}</span>
           </button>
         ))}
-        {services.length === 0 && <div className="py-6 text-center text-xs text-faint">No prices to show yet — the crew sets their own prices.</div>}
+        {services.length === 0 && <div className="py-6 text-center text-xs text-faint">No prices to show yet. The crew sets their own prices.</div>}
       </div>
       <div className="mb-3 flex items-baseline justify-between">
         <div className="font-headline text-[15px] tracking-wide">THE CREW</div>
@@ -98,7 +98,7 @@ export default function CustomerHomePage() {
             </div>
           </div>
         ))}
-        {barbers.length === 0 && <div className="py-10 text-center text-xs text-faint">No barbers yet — check back soon.</div>}
+        {barbers.length === 0 && <div className="py-10 text-center text-xs text-faint">No barbers yet. Check back soon.</div>}
       </div>
     </div>
   );
