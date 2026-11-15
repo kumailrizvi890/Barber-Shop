@@ -2,6 +2,8 @@
 
 A full-stack Next.js booking app (demo build) for Fade Kings Barber Shop (Lynnwood): customers can browse the crew and prices without an account, book a chair as a guest or a member, track appointments, and earn rewards; barbers approve/decline requests, manage weekly availability and services, and post work photos/videos.
 
+Live demo: https://fade-house-puce.vercel.app
+
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase** (Postgres, Auth, Storage).
 
 The theme is black and gold by default (dark), with a warm light palette on the toggle.
@@ -45,28 +47,12 @@ Open [http://localhost:3000](http://localhost:3000) — you'll land on `/auth`. 
 
 The fastest path is **Vercel**:
 
-1. Push this folder to a GitHub repo (see below).
+1. Push this folder to a GitHub repo.
 2. Go to [vercel.com/new](https://vercel.com/new) → import the repo.
 3. Add the two env vars from step 2 in the Vercel project settings.
 4. Deploy. Vercel auto-detects Next.js — no build config needed.
 
 Any other Node host (Railway, Render, Netlify, self-hosted) works too since this is a standard Next.js app — just set the same two env vars and run `npm run build && npm start`.
-
-## Pushing to GitHub
-
-To publish it:
-
-```bash
-cd fade-kings   # this folder
-git init
-git add .
-git commit -m "Fade Kings Barber Shop — initial build"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
-```
-
-(Create the empty repo on GitHub first, or use `gh repo create` if you have the GitHub CLI.)
 
 ## 5. Owner dashboard setup (existing/live project)
 
@@ -92,7 +78,7 @@ New barber signups now land on a "Application under review" screen (`/pending`) 
 - **Notifications**: bell + slide-down panel, generated on request/approve/decline/reminder/completion, unread badge, mark-as-read.
 - **Rewards**: 10 points per $1, credited on rating; 5000-point redemption.
 - **Owner dashboard** (`/owner`): approve/reject barber applications, browse the crew with per-barber stats (revenue YTD/month/all-time, bookings, cuts completed), shop-wide revenue and booking totals, and a live "Online Bookings" counter (also shown to anonymous visitors on the `/auth` landing page) via a Supabase Realtime-backed public counter.
-- **Data**: everything lives in Postgres via `supabase/schema.sql` — no mock/in-memory state.
+- **Data**: the live database is paused, so the demo runs on bundled sample data.
 
 ## Notes & things you may want to adjust
 
