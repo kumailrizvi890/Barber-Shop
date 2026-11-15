@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { markNotificationRead } from "@/lib/api";
 import { initialsFor } from "@/lib/slots";
+import { withTimeout } from "@/lib/with-timeout";
 import type { Notification, Profile } from "@/lib/types";
 
 interface AppContextValue {
@@ -33,39 +34,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Customer routes are browsable with no session at all — only barbers
   // require a real login. Booking is the only action that needs an identity,
   // and that identity is created lazily via ensureGuestProfile() below.
+  // Every call here is guarded: if Supabase is unreachable (paused
+  // project), the visitor just browses as a guest instead of the page
+  // hanging on its loading state forever.
   const refreshProfile = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+      const result = await withTimeout(supabase.auth.getUser(), 2500);
+      const user = result?.data.user ?? null;
+      if (!user) {
+        setProfile(null);
+        setIsAnonymous(false);
+        return;
+      }
+      setIsAnonymous(!!user.is_anonymous);
+      const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+      setProfile((data as Profile) ?? null);
+    } catch {
       setProfile(null);
       setIsAnonymous(false);
-      return;
     }
-    setIsAnonymous(!!user.is_anonymous);
-    const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-    setProfile((data as Profile) ?? null);
   }, [supabase]);
 
   const refreshNotifications = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setNotifications((data as Notification[]) ?? []);
+    try {
+      const result = await withTimeout(supabase.auth.getUser(), 2500);
+      const user = result?.data.user ?? null;
+      if (!user) return;
+      const { data } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      setNotifications((data as Notification[]) ?? []);
+    } catch {
+      setNotifications([]);
+    }
   }, [supabase]);
 
   useEffect(() => {
     (async () => {
-      await refreshProfile();
-      await refreshNotifications();
-      setLoading(false);
+      try {
+        await refreshProfile();
+        await refreshNotifications();
+      } finally {
+        setLoading(false);
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
