@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Booking, Post, PostComment, Profile, RewardRedemption } from "@/lib/types";
+import { demoBarberProfile } from "@/lib/demo-data";
+import { withTimeout } from "@/lib/with-timeout";
 
 export async function approveBarber(supabase: SupabaseClient, barberId: string) {
   const { error } = await supabase.from("profiles").update({ status: "approved" }).eq("id", barberId);
@@ -226,7 +228,7 @@ export async function requestBooking(
   await notify(
     supabase,
     params.barberId,
-    `New request from ${params.customerName} — ${params.serviceName} on ${params.dateLabel} at ${params.time}.`,
+    `New request from ${params.customerName}: ${params.serviceName} on ${params.dateLabel} at ${params.time}.`,
     "📩"
   );
 }
@@ -356,7 +358,7 @@ export async function confirmRedemption(supabase: SupabaseClient, redemption: Re
     .eq("status", "pending");
   if (error) throw error;
 
-  await notify(supabase, redemption.user_id, "Your free cut was redeemed — enjoy!", "🎁");
+  await notify(supabase, redemption.user_id, "Your free cut was redeemed. Enjoy!", "🎁");
 }
 
 export async function toggleBlockedSlot(
@@ -383,13 +385,23 @@ export interface BarberProfileData {
 }
 
 export async function fetchBarberProfile(supabase: SupabaseClient, barberId: string): Promise<BarberProfileData | null> {
-  const [{ data: profile }, { data: services }, { data: posts }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", barberId).eq("role", "barber").single(),
-    supabase.from("barber_services").select("*").eq("barber_id", barberId).order("created_at"),
-    supabase.from("posts").select("*").eq("barber_id", barberId).order("created_at", { ascending: false }),
-  ]);
-  if (!profile) return null;
-  return { profile: profile as Profile, services: services ?? [], posts: (posts as Post[]) ?? [] };
+  try {
+    const res = await withTimeout(
+      Promise.all([
+        supabase.from("profiles").select("*").eq("id", barberId).eq("role", "barber").single(),
+        supabase.from("barber_services").select("*").eq("barber_id", barberId).order("created_at"),
+        supabase.from("posts").select("*").eq("barber_id", barberId).order("created_at", { ascending: false }),
+      ]),
+      2500
+    );
+    if (!res) return demoBarberProfile(barberId);
+    const [{ data: profile }, { data: services }, { data: posts }] = res;
+    if (!profile) return demoBarberProfile(barberId);
+    return { profile: profile as Profile, services: services ?? [], posts: (posts as Post[]) ?? [] };
+  } catch {
+    // Supabase unreachable: sample barbers still get a working profile page.
+    return demoBarberProfile(barberId);
+  }
 }
 
 export async function updateBarberProfile(
