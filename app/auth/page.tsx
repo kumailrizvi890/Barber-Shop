@@ -26,7 +26,7 @@ const TICKER_ITEMS = ["FADES", "TAPERS", "BEARD SCULPT", "KIDS CUTS", "HOT TOWEL
 const FEATURES = [
   {
     title: "Book in seconds",
-    sub: "Live chair availability, no calls",
+    sub: "Sample availability, no calls",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="3" y="5" width="18" height="16" rx="2" stroke="rgb(var(--color-gold))" strokeWidth="2" />
