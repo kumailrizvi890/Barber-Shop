@@ -4,6 +4,8 @@ A full-stack Next.js booking app (demo build) for Fade Kings Barber Shop (Lynnwo
 
 Live demo: https://fade-house-puce.vercel.app
 
+> **Demo runs on bundled sample data — Supabase is paused.**
+
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase** (Postgres, Auth, Storage).
 
 The theme is black and gold by default (dark), with a warm light palette on the toggle.
@@ -54,9 +56,9 @@ The fastest path is **Vercel**:
 
 Any other Node host (Railway, Render, Netlify, self-hosted) works too since this is a standard Next.js app — just set the same two env vars and run `npm run build && npm start`.
 
-## 5. Owner dashboard setup (existing/live project)
+## 5. Owner dashboard setup (for when the project is live again)
 
-The owner dashboard, barber-approval workflow, and live booking counter need a schema update on top of what's already deployed. Since your Supabase project is already live, **don't re-run `schema.sql`** (it's not written to be safely re-run) — instead:
+The owner dashboard, barber-approval workflow, and live booking counter need a schema update on top of what's already deployed. The Supabase project is currently paused, so run these steps when you resume it — **don't re-run `schema.sql`** (it's not written to be safely re-run) — instead:
 
 1. Open **SQL Editor** in your Supabase project → paste the contents of [`supabase/migrations/002_owner_dashboard.sql`](./supabase/migrations/002_owner_dashboard.sql) → Run. This adds the `owner` role, a `status` (pending/approved/rejected) column on `profiles` for barber approval, and a public `site_stats` counter that powers the live "Online Bookings" number.
    - Existing barbers are unaffected — the new `status` column defaults to `'approved'` for every existing row, so no one currently live disappears from The Crew.
