@@ -1,19 +1,37 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { BarberService, Profile } from "@/lib/types";
+import { demoBarbers } from "@/lib/demo-data";
+import { withTimeout } from "@/lib/with-timeout";
+
+// Live reads get 2.5s before the demo falls back to sample data, so a
+// hung backend never leaves the menu and crew blank for long.
+const LIVE_TIMEOUT_MS = 2500;
 
 export interface BarberWithServices extends Profile {
   barber_services: BarberService[];
 }
 
-export async function fetchBarbers(supabase: SupabaseClient): Promise<BarberWithServices[]> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*, barber_services(*)")
-    .eq("role", "barber")
-    .eq("status", "approved")
-    .order("name");
-  if (error) throw error;
-  return (data as BarberWithServices[]) ?? [];
+export async function fetchBarbers(supabase: SupabaseClient | null): Promise<BarberWithServices[]> {
+  // Live data first. If Supabase cannot be reached at all (the project is
+  // paused, the network is down), fall back to the bundled sample crew so
+  // the public menu and crew sections still render instead of erroring.
+  if (!supabase) return demoBarbers();
+  try {
+    const res = await withTimeout(
+      supabase
+        .from("profiles")
+        .select("*, barber_services(*)")
+        .eq("role", "barber")
+        .eq("status", "approved")
+        .order("name"),
+      LIVE_TIMEOUT_MS
+    );
+    if (!res) return demoBarbers();
+    if (res.error) throw res.error;
+    return (res.data as BarberWithServices[]) ?? [];
+  } catch {
+    return demoBarbers();
+  }
 }
 
 export function specialtyLabel(b: BarberWithServices) {
