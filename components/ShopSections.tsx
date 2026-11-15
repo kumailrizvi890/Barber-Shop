@@ -10,14 +10,15 @@ import {
   priceLabel,
   type BarberWithServices,
 } from "@/lib/barbers";
+import { isDemoData } from "@/lib/demo-data";
 import { BarberAvatar } from "@/components/UI";
 import { initialsFor, TIME_SLOTS } from "@/lib/slots";
 
-// Services, prices and crew, straight from the shop's real data — the
-// approved barbers and the services they set themselves. Nothing here is
-// demo content: when no barbers are listed, the sections say so instead of
-// showing made-up prices or faces. Tapping a service or a barber jumps
-// straight into the booking flow with that choice already picked.
+// Services, prices and crew, from the shop's live data when Supabase can
+// be reached, or from the bundled sample crew when it cannot (paused
+// project). Either way the sections render instead of erroring. Tapping a
+// service or a barber jumps straight into the booking flow with that
+// choice already picked.
 export function ShopSections() {
   const [barbers, setBarbers] = useState<BarberWithServices[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ export function ShopSections() {
   }, []);
 
   const services = shopServices(barbers);
+  const showingSample = isDemoData(barbers);
   const hours = `${TIME_SLOTS[0]} – ${TIME_SLOTS[TIME_SLOTS.length - 1]}, every day`;
 
   return (
@@ -57,10 +59,10 @@ export function ShopSections() {
         {loading ? (
           <p className="mt-8 text-muted">Loading the menu…</p>
         ) : failed ? (
-          <p className="mt-8 text-muted">Couldn’t load the menu — try again in a bit.</p>
+          <p className="mt-8 text-muted">Couldn’t load the menu. Try again in a bit.</p>
         ) : services.length === 0 ? (
           <p className="mt-8 max-w-xl text-muted">
-            No prices to show yet — the crew sets their own prices, and no barbers are listed right now. Check back soon.
+            No prices to show yet. The crew sets their own prices, and no barbers are listed right now. Check back soon.
           </p>
         ) : (
           <ul className="mt-8 divide-y divide-line/10 border-y border-line/10">
@@ -82,7 +84,7 @@ export function ShopSections() {
             ))}
           </ul>
         )}
-        <p className="mt-4 text-sm text-muted">Nothing is charged when you book — pay at the shop.</p>
+        <p className="mt-4 text-sm text-muted">Nothing is charged when you book. Pay at the shop.</p>
       </section>
 
       {/* ---------- MEET THE CREW ---------- */}
@@ -92,9 +94,9 @@ export function ShopSections() {
         {loading ? (
           <p className="mt-8 text-muted">Loading the crew…</p>
         ) : failed ? (
-          <p className="mt-8 text-muted">Couldn’t load the crew — try again in a bit.</p>
+          <p className="mt-8 text-muted">Couldn’t load the crew. Try again in a bit.</p>
         ) : barbers.length === 0 ? (
-          <p className="mt-8 max-w-xl text-muted">No barbers listed yet — check back soon.</p>
+          <p className="mt-8 max-w-xl text-muted">No barbers listed yet. Check back soon.</p>
         ) : (
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {barbers.map((b) => (
@@ -113,6 +115,9 @@ export function ShopSections() {
               </Link>
             ))}
           </div>
+        )}
+        {showingSample && (
+          <p className="mt-6 text-sm text-muted">Sample crew and prices shown while the live shop data is unavailable.</p>
         )}
       </section>
 
